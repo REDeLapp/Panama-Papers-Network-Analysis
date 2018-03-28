@@ -67,3 +67,6 @@ How The Data Is Structured:
 ## Model
 
 ## References
+1. https://offshoreleaks.icij.org/pages/database
+2. http://wps.fep.up.pt/wps/wp592.pdf
+2. 
