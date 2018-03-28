@@ -4,11 +4,6 @@
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and, maybe, Jordan.
 
 ## Scope
-To Do’s: 
-- (5 days) Analyze Network
-- (2 days) Visualization
-- (2 days) Background research  (i.e. Who are these people?)
-- (1 day) Clean Data
 
 
 ## The Data
@@ -31,24 +26,24 @@ How The Data Is Structured:
 
 * Entity (offshore): company, trust or fund created in a low-tax, offshore
    jurisdiction by an agent.
-   
+
 * Officer: person or company who plays a role in an offshore entity.
 
 * Intermediary: a go-between for someone seeking an offshore corporation
   and an offshore service provider - usually a law-firm or a middleman that
   asks an offshore service provider to create an offshore firm for a client.
-  
+
 * Address: contact postal address as it appears in the original databases
   obtained by ICIJ
-  
+
 | Name          | Type          | Purpose | # of rows | Columns of interest |
 | ------------- |:-------------:| -------:|----------:|------------:|
-|  edges.csv    |    Edge       |    |     |         |
-| addresses.csv |    Nodes      |     |     |         |
-| Entities.csv  |    Nodes      |    |      |         |
-| Intermediaries|    Nodes      | |  |    |
-| Officers.csv  |    Nodes      | Person
-  
+|  panama_papers_edges.csv    |    Edge       |   Each edge has a type of the represented relationship | 1,269,796    |   START_ID, TYPE, END_ID      |
+| panama_papers_addresses.csv |    Nodes      |   Legal addresses of officers and entities  |   151,127  |      n/a   |
+| panama_papers_entity.csv  |    Nodes      |   Legal entities (corporations, firms, and so on) |   319,421   |     name, jurisdiction    |
+| panama_papers_intermediary.csv|    Nodes      |  Persons and organizations that act as links between other organizations| 23,642 |  name, country_code  |
+| panama_papers_officer.csv  |    Nodes      | Persons (directors, shareholders, and so on)| 345,645 | name, country_code |
+
   ![Nodes and Relationships](https://github.com/REDeLapp/Panama-Papers-Network-Analysis/blob/master/pictures/filename.png)
 
 ## Network Analysis Methods
@@ -56,7 +51,7 @@ How The Data Is Structured:
 * Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the         undefined for directed graphs
 
 * Bridges: high  betweenness  individuals  are  often  critical  to  collaboration
-  across different groups. 
+  across different groups.
 * Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure,i.e., how the network is compartmentalized into sub-networks
 * Closeness and harmonic closeness centrality
 * Eigenvector centrality
@@ -69,4 +64,5 @@ How The Data Is Structured:
 ## References
 1. https://offshoreleaks.icij.org/pages/database
 2. http://wps.fep.up.pt/wps/wp592.pdf
-2. 
+2. Complex Network Analysis in Python, Dmitry Zinoview, The Pragmatic Programmers. (2018)
+
