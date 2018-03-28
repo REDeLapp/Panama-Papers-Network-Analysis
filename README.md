@@ -1,6 +1,7 @@
 # Panama-Papers-Network-Analysis
 
 ## The Project
+Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and, maybe, Jordan.
 
 ## Scope
 
