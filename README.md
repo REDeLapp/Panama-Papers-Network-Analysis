@@ -4,11 +4,18 @@
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and, maybe, Jordan.
 
 ## Scope
+To Do’s: 
+- (5 days) Analyze Network
+- (2 days) Visualization
+- (2 days) Background research  (i.e. Who are these people?)
+- (1 day) Clean Data
+
 
 ## The Data
+The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
+information on approximately 360,000 businesses and individuals in more than 200 countries linked to offshore structures and covering a time period of nearly 40 years, from 1977 to 2016.
 
-commercial  registration  of  all  types  of  companies  involved  in  the  scandal  and
-the existing relations type, which are:
+The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships  between  companies  and  individual  people  with  offshore  companies based in tax havens. Consists in a directed and unweighted network based on commercial  registration  of  all  types  of  companies  involved  in  the  scandal  and the existing relations type, which are:
 
 * "director of” - referring to the person appointed to the company’s management;
 
@@ -20,6 +27,7 @@ the existing relations type, which are:
 
 * ”similar of” - if the company is related to another company, among other attributes.
 
+How The Data Is Structured:
 
 * Entity (offshore): company, trust or fund created in a low-tax, offshore
    jurisdiction by an agent.
