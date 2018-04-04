@@ -5,22 +5,25 @@ import community as cm
 from operator import itemgetter
 
 def comparing_centralities(G):
-#     ## Comparing the Centralities
-#     dgr = nx.degree_centrality(ego)
+    '''
+    This function campares centralities
+    -------------------------------------------
+    INPUT:
+    - G, the instanciated networkx graph
+    OUPUT: Returns a data frame of all pair wise correlation between the centralities
+    '''
     col = nx.closeness_centrality(ego)
     har = nx.harmonic_centrality(ego)
     bet = nx.betweenness_centrality(ego)
     dgr = nx.degree_centrality(ego)
     pgr = nx.pagerank(ego)
-    eig = nx.eigenvector_centrality(ego)
-#
-    centralities = pd.concat(
-    [pd.Series(c) for c in (eig, pgr, har, bet, col)], axis = 1)
-
-    centralities.columns("Eigenvector", "PageRank",
-                        "Harmonic Closeness", "Closeness",
-                        "Degree", "Betweenness")
-    centralities["Harmonic Closeness"] /= centralities.shape[0]
+    eig = nx.eigenvector_centrality(ego, max_iter = 500)
+    # Converts into pandas series
+    centralities = pd.concat([pd.Series(c) for c in (eig, pgr, har, col, dgr, bet)], axis = 1)
+    # Concatentates all vectors into a pd.DataFrame
+    centralities.columns = ["Eigenvector", "PageRank", "Harmonic Closeness", "Closeness", "Degree", "Betweenness"]
+    # Harmonic Closeness is the only NetworkX centrality that is not returned normalized
+    centralities["Harmonic Closeness"] /= centralities.shape[0] # Normalize the Harmonic Closeness
 
     # Calculated the correlations for each pair of centralities
     c_df = centralities.corr()
@@ -31,6 +34,7 @@ def comparing_centralities(G):
 
 def max_sort_centrality(mydict, num):
     '''
+    -------------------------------------------
     INPUT:
     - mydict, give a dictionary of centrality
     - num, the number to
@@ -41,10 +45,15 @@ def max_sort_centrality(mydict, num):
 
 def plot_harmonic_closeness_eigen(G):
     '''
+    GAOL
     "A network with positive correlation attributes is called
     assortative; in an asssortative network, nodes tend to connect to nodes
     with similar attribute values. This tendency is called assortative mixing.
     A dissortative newtork is the opposite." ~ book
+    -------------------------------------------
+    INPUT: G, networkx graph
+    OUPUT:
+    scatter plot of the eignevector centralities versus the closeness centralities
     '''
     eig = nx.eigenvector_centrality(G, max_iter = 1000)
     col = nx.closeness_centrality(G)
@@ -91,6 +100,7 @@ def my_louvian_modularity(G):
     INPUT: instanciated networkx graph, G
     OUTPUT: the louvian modularity
     '''
+    partition = community.best_partition(ego)
     return cm.modularity(partition, G)
 
 # def jake_modularity(G):
@@ -112,31 +122,6 @@ def modularity_based_communities(G):
     pass
 
 if __name__ == '__main__':
-
-    ## Comparing the Centralities
-    # dgr = nx.degree_centrality(ego)
-    col = nx.closeness_centrality(ego)
-    har = nx.harmonic_centrality(ego)
-
-    bet = nx.betweenness_centrality(ego)
-    dgr = nx.degree_centrality(ego)
-    pgr = nx.pagerank(ego)
-    eig = nx.eigenvector_centrality(ego)
-
-    centralities = pd.concat(
-    [pd.Series(c) for c in (eig, pgr, har, clo, dgr, bet)], axis = 1)
-
-    centralities.columns("Eigenvector", "PageRank",
-                        "Harmonic Closeness", "Closeness",
-                        "Degree", "Betweenness")
-    centralities["Harmonic Closeness"] /= centralities.shape[0]
-
-    # Calculated the correlations for each pair of centralities
-    c_df = centralities.corr()
-    ll_triangle = np.tri(c_df.shape[0], k= -1)
-    c_df *= ll_triangle
-    c_series = c_df.stack().sort_values()
-    c_series.tail()
 
 
     nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})

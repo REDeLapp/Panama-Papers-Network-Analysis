@@ -55,8 +55,6 @@ def load_clean_data():
     #     F.remove_node("")
     return F, all_nodes
 
-
-
 def build_subgraph(F, all_nodes):
     '''
     GOAL: This function build the subgraph of the notes_of_interest, creates the graph,
@@ -65,7 +63,6 @@ def build_subgraph(F, all_nodes):
     INPUT:
         - 'F' is the NetworkX graph from Pandas DataFrame.
         - 'all_nodes', is the concatenation of all node lists into one dataframe.
-        - 'file_name' as string that is name you wnat to save the picture.
         - 'cc'... [edit]
     OUPUT:
         - 'ego' is a subgraph of the countries of interest.
@@ -102,9 +99,17 @@ def build_subgraph(F, all_nodes):
     # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
     #                                 & nodes.name.isnull()].address)
     nx.relabel_nodes(ego, valid_names)
+
+    # ego_edges = filter(lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0, g.edges())
+    # ego.add_edges_from(ego_edges)
     return ego
 
 def GernalGraph(ego, filename):
+    '''
+    INPUT:
+    - ego, NetworkX subgraph
+    - filename, is the name of the file you want to save it to.
+    '''
     # Save and proceed to gephi!
     with open ("/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/figures/panama-{y}.graphml".format(y=filename), "wb") as ofile:
         nx.write_graphml(ego, ofile)
@@ -114,6 +119,6 @@ def GernalGraph(ego, filename):
 
 
 if __name__ == '__main__':
-    F, all_nodes = load_clean_data() # Import and clean
-    ego = build_subgraph(F, all_nodes ) # Create subgroup
-    GernalGraph(ego, filename = "ego_3") #Generages image in Gephi
+    # F, all_nodes = load_clean_data() # Import and clean
+    # ego = build_subgraph(F, all_nodes ) # Create subgroup
+    # GernalGraph(ego, filename = "ego_3") #Generages image in Gephi
