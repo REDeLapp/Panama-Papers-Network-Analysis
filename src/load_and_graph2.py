@@ -18,19 +18,21 @@ def load_clean_data():
     - 'all_nodes', is the concatenation of all node lists into one dataframe
     '''
     # Read the edge list and convert it to network
-    edges = pd.read_csv('''../data/csv_panama_papers_2018-02-14/panama_papers_edges.csv''')
+    edges = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv')
     edges = edges[edges["TYPE"] != "registrated address"]
     F = nx.from_pandas_dataframe(edges, "START_ID", "END_ID") # Return a graph from Pandas DataFrame.
 
     # Read node lists
-    officers       = pd.read_csv("../data/csv_panama_papers_2018-02-14/panama_papers_nodes_officer.csv", index_col = "node_id")
-    intermediaries = pd.read_csv("../data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv", index_col = "node_id")
-    entities       = pd.read_csv("../data/csv_panama_papers_2018-02-14/panama_papers_nodes_entity.csv", index_col = "node_id")
+    officers       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_officer.csv', index_col = "node_id")
+    intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
+    entities       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_entity.csv', index_col = "node_id")
+    # addresses      = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_address.csv', index_col = "node_id")
 
     # Combine the node lists into one dataframe
     officers["type"] = "officer"
     intermediaries["type"] = "intermediary"
     entities["type"] = "entity"
+    # addresses["type"] = "address"
     #Concatentate
     all_nodes = pd.concat([officers, intermediaries, entities])
 
@@ -55,7 +57,7 @@ def load_clean_data():
 
 
 
-def build_subgraph(F, all_nodes, filename):
+def build_subgraph(F, all_nodes):
     '''
     GOAL: This function build the subgraph of the notes_of_interest, creates the graph,
     and then saves the figure.
@@ -81,38 +83,37 @@ def build_subgraph(F, all_nodes, filename):
     # # so the keys are the cutoff-neighborhood of the seed.
     nodes_of_interest = set.union(*[set(nx.single_source_shortest_path_length(F, seed, cutoff = 2).keys())
                                    for seed in seeds])
+    # nodes_of_interest = [elem.nodes() for elem in nx.connected_component_subgraphs(F)
+    #                     if nx.number_of_nodes(elem) >= 3
+    #                     or nx.number_of_edges(elem) >= 3]
     # Extract the subgraph that contains all the keys for all the dictionaries
     # with all the connecting eges ... and relabel it
-    # ego = nx.subgraph(F, nodes_of_interest)
     ego = nx.subgraph(F, nodes_of_interest)
     nodes = all_nodes.reindex(ego)
-    # nodes = all_nodes.loc[ego] # <-- Error is coming from here!
-    nodes = nodes[~nodes.index.duplicated()] # There are duplicate countru codes on some nodes
+    nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
 
-    # nx.set_node_attributes(sub_F, "cc", nodes["country_codes"])
     #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
     nx.set_node_attributes(ego, nodes["country_codes"], "cc")
     nx.set_node_attributes(ego, nodes["type"], "ty")
     nx.set_node_attributes(ego, nodes["name"], "nm")
     # get rid of null and turn the list into a dictionary
     valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
+    ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
+    # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
+    #                                 & nodes.name.isnull()].address)
     nx.relabel_nodes(ego, valid_names)
-
-    # Save and proceed to gephi!
-    # with open ("panama-saujor.grapml", "wb") as ofile:
-    # with open ("../figures/panama-{y}.graphml".format(y=filename), "wb") as ofile:
-    #     nx.write_graphml(ego, ofile)
-    # pass
     return ego
 
 def GernalGraph(ego, filename):
     # Save and proceed to gephi!
-    with open ("../figures/panama-{y}.graphml".format(y=filename), "wb") as ofile:
+    with open ("/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/figures/panama-{y}.graphml".format(y=filename), "wb") as ofile:
         nx.write_graphml(ego, ofile)
     pass
 
 
+
+
 if __name__ == '__main__':
     F, all_nodes = load_clean_data() # Import and clean
-    ego = build_subgraph(F, all_nodes, filename = "SAU-JOR-old" ) # Create subgroup
-    GernalGraph(ego, filename = "practice") #Generages image in Gephi
+    ego = build_subgraph(F, all_nodes ) # Create subgroup
+    GernalGraph(ego, filename = "ego_3") #Generages image in Gephi

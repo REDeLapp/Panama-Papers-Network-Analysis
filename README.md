@@ -1,10 +1,7 @@
 # Panama-Papers-Network-Analysis
 
 ## The Project
-Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and, maybe, Jordan.
-
-## Scope
-
+Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
 ## The Data
 The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
@@ -23,6 +20,8 @@ The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships 
 * ”similar of” - if the company is related to another company, among other attributes.
 
 How The Data Is Structured:
+![](images/shapeofthedata.png)
+(source:https://guides.neo4j.com/sandbox/icij-paradise-papers/datashape.html)
 
 * Entity (offshore): company, trust or fund created in a low-tax, offshore
    jurisdiction by an agent.
@@ -44,25 +43,24 @@ How The Data Is Structured:
 | panama_papers_intermediary.csv|    Nodes      |  Persons and organizations that act as links between other organizations| 23,642 |  name, country_code  |
 | panama_papers_officer.csv  |    Nodes      | Persons (directors, shareholders, and so on)| 345,645 | name, country_code |
 
-  ![Nodes and Relationships](https://github.com/REDeLapp/Panama-Papers-Network-Analysis/blob/master/pictures/filename.png)
+
 
 ## Network Analysis Methods
 
-* Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the         undefined for directed graphs
+* Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs
 
-* Bridges: high  betweenness  individuals  are  often  critical  to  collaboration
-  across different groups.
-* Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure,i.e., how the network is compartmentalized into sub-networks
-* Closeness and harmonic closeness centrality
-* Eigenvector centrality
-* PageRank
+* Bridges: high  betweenness  individuals  are  often  critical  to  collaboration across different groups.
 
-## EDA
+* Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks
+
+* Eigenvector centrality: identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
+
+* PageRank: The rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
 ## Model
+![](images/shapeofthedata.png)
 
 ## References
 1. https://offshoreleaks.icij.org/pages/database
 2. http://wps.fep.up.pt/wps/wp592.pdf
 2. Complex Network Analysis in Python, Dmitry Zinoview, The Pragmatic Programmers. (2018)
-
