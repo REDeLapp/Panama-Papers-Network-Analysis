@@ -62,7 +62,11 @@ How The Data Is Structured:
 * PageRank: The rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
 ## Model
-![](images/SAU-JOR.gephi)
+![](images/global.png)
+![](images/legend_modularity.png)
+
+![](images/zoom.png)
+![](images/legend_type.png)
 
 
 ## References
