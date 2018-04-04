@@ -3,9 +3,10 @@
 ## The Project
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
-## The Process
+Why you should care... TBD
 
-##
+## The Process
+TBD
 
 ## The Data
 The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
@@ -62,11 +63,14 @@ How The Data Is Structured:
 * PageRank: The rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
 ## Model
+
+[insert tables]
+
 ![](images/global.png)
 ![](images/legend_modularity.png)
 
 ![](images/zoom.png)
-![](images/legend_type.png)
+![](images/legend_types.png)
 
 
 ## References
