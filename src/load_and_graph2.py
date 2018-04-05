@@ -104,7 +104,7 @@ def build_subgraph(F, all_nodes):
     # ego.add_edges_from(ego_edges)
     return ego
 
-def GernalGraph(ego, filename):
+def GeneralGraph(ego, filename):
     '''
     INPUT:
     - ego, NetworkX subgraph
@@ -121,4 +121,4 @@ def GernalGraph(ego, filename):
 if __name__ == '__main__':
     # F, all_nodes = load_clean_data() # Import and clean
     # ego = build_subgraph(F, all_nodes ) # Create subgroup
-    # GernalGraph(ego, filename = "ego_3") #Generages image in Gephi
+    # GeneralGraph(ego, filename = "ego_3") #Generages image in Gephi
