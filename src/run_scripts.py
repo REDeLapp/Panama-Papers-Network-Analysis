@@ -35,19 +35,36 @@ def filter_nodess_by_degree(G, all_nodes, k):
 def edge_analysis(G, attr = 'intermediary'):
     '''
     Find the average number of degree a node with a certain attribute
+
+    INPUT:
+    - G, instantiated newtorkx graph
+    - attr, is a string of the attribute you want to explore
+    OUPUT:
+    - 'dgre_connectivity_dict', is a dictionary of the
+    - 'mean_of_dgrs', is a mean
     '''
     # node_inter = filter(lambda n, d: d['type'] == 'intermediary', G.nodes(data=True))
     # intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
     # idx_nodes = all_nodes[all_nodes.type == 'intermediary'].index
     # foo = intermediaries.name
     nodes_of_interest = node_attr(G, attr = 'intermediary')
-    avg_degree_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
-    return avg_degree_dict
+    dgr_connectivity_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
+
+    # nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
+    # nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
+    mean_of_dgrs = [v  for k,v in ego.degree(nodes_of_interest)]
+
+    return dgre_connectivity_dict, mean_of_dgrs
 
 def node_attr(G, attr = 'intermediary'):
     return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
 
 def pandas_df_to_markdown_table(df):
+    '''
+    GOAL: this function converts a Pandas DataFrame into a markdown table.
+    INPUT: df, a pandas data frame
+    OUPUT: a markdown table
+    '''
     from IPython.display import Markdown, display
     fmt = ['---' for i in range(len(df.columns))]
     df_fmt = pd.DataFrame([fmt], columns=df.columns)
@@ -69,7 +86,3 @@ if __name__ == '__main__':
     #  # ...:         for (p, d) in ego.nodes(data=True):
     #  # ...:             if d['ty'] == 'intermediary':
     #  # ...:                 nodesAt5.append(p)
-    nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
-    nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
-    foo = ego.degree(nodes_of_interest)
-    bar = [v  for k,v in foo]
