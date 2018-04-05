@@ -2,7 +2,7 @@ import networkx as nx
 import load_and_graph2 as lg
 import measuring2 as msr
 
-def filter_nodess_by_degree(G, all_nodes, k):
+def filter_nodes_by_degree(G, all_nodes, k):
     '''
     GOAL: this function removes all nodes of a graph G of
     degrees less than or equal to k
@@ -41,7 +41,8 @@ def edge_analysis(G, attr = 'intermediary'):
     - attr, is a string of the attribute you want to explore
     OUPUT:
     - 'dgre_connectivity_dict', is a dictionary of the
-    - 'mean_of_dgrs', is a mean
+    - 'mean_degrees', the average number of degrees the nodes
+        of a certain attribute has
     '''
     # node_inter = filter(lambda n, d: d['type'] == 'intermediary', G.nodes(data=True))
     # intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
@@ -52,9 +53,9 @@ def edge_analysis(G, attr = 'intermediary'):
 
     # nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
     # nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
-    mean_of_dgrs = [v  for k,v in ego.degree(nodes_of_interest)]
+    mean_degrees = [v  for k,v in ego.degree(nodes_of_interest)]
 
-    return dgre_connectivity_dict, mean_of_dgrs
+    return dgre_connectivity_dict, mean_degrees
 
 def node_attr(G, attr = 'intermediary'):
     return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
@@ -70,6 +71,28 @@ def pandas_df_to_markdown_table(df):
     df_fmt = pd.DataFrame([fmt], columns=df.columns)
     df_formatted = pd.concat([df_fmt, df])
     display(Markdown(df_formatted.to_csv(sep="|", index=False)))
+
+def plot_hist_avg_degrees(G, attr):
+    '''
+    Visualizes the distribution of the average degrees for an
+    attribute of interest.
+    Can either be passed 'G' and 'attr' or just the 'mean_degrees'.
+    INPUT:
+    - G, a instanciated networkx graph
+    - attr, the attribute of interest
+    - mean_degrees, the average number of degrees the nodes
+        of a certain attribute has.
+    OUPUT:
+    - returns histogram of mean_degrees
+    '''
+    # if G and attr:
+    mean_degrees = edge_analysis(G, attr = 'intermediary')
+    plt.hist(mean_degrees, bins = 50)
+    plt.xlabel('The Mean Degree Per Node For {}'.format(attr))
+    plt.ylabel('Frequency of Mean Degree')
+    # else:
+    #     plt.hist(mean_degeers, bins = 20)
+
 
 if __name__ == '__main__':
     G, all_nodes = lg.load_clean_data() # Import and clean
