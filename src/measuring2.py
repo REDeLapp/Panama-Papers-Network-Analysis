@@ -112,14 +112,17 @@ def modularity_based_communities(G):
     - their sizes,
     - which nodes belong to which community
     '''
-    # Partitions
+    ## Partitions
+    # 1)dictionary with node labels as keys and int communite identifiers as value
+    # 2) calc the mdoualrity of the partition with respect to the orignial network.   sd
     partition = cm.best_partition(G)
+    # Convert network partition into a pandas series
     part_as_series = pd.Series(partition)
-    part_as_series.sort_values()
-    part_as_series.value_counts()
-    return
+    part_as_series.sort_values() #
+    community_size = part_as_series.value_counts() #size of communite
+    return part_as_series, community_size
 
 if __name__ == '__main__':
 
 
-    nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
+    # nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
