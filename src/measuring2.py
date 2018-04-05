@@ -100,26 +100,24 @@ def my_louvian_modularity(G):
     INPUT: instanciated networkx graph, G
     OUTPUT: the louvian modularity
     '''
-    partition = community.best_partition(ego)
+    partition = cm.best_partition(G)
     return cm.modularity(partition, G)
 
-# def jake_modularity(G):
-    # return m
-    pass
 def modularity_based_communities(G):
     '''
     ----------------------------------
     INPUT: Networkx graph network
     OUPUT:
-    -the communities,
+    - the communities,
     - their sizes,
     - which nodes belong to which community
     '''
+    # Partitions
     partition = cm.best_partition(G)
-
     part_as_series = pd.Series(partition)
     part_as_series.sort_values()
-    pass
+    part_as_series.value_counts()
+    return
 
 if __name__ == '__main__':
 
