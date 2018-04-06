@@ -1,4 +1,5 @@
 import networkx as nx
+import community as cm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -104,7 +105,7 @@ def build_subgraph(F, all_nodes):
     # ego.add_edges_from(ego_edges)
     return ego
 
-def GeneralGraph(ego, filename):
+def GeneralGraph(G, filename):
     '''
     INPUT:
     - ego, NetworkX subgraph
@@ -112,28 +113,36 @@ def GeneralGraph(ego, filename):
     '''
     # Save and proceed to gephi!
     with open ("/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/figures/panama-{y}.graphml".format(y=filename), "wb") as ofile:
-        nx.write_graphml(ego, ofile)
+        nx.write_graphml(G, ofile)
     pass
 
-def community_graph(G = none):
-    G = nx.erdos_renyi_graph(30, 0.05)
+def split_graph(G, ego_nodes):
     #first compute the best partition
-    partition = comm.best_partition(G)
-    #drawing
-    size = float(len(set(partition.values())))
-    pos = nx.spring_layout(G)
-    count = 0
-    for com in set(partition.values()) :
-        count += 1.
-        list_nodes = [nodes for nodes in partition.keys()
-                                    if partition[nodes] == com]
-    nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
-                                node_color = str(count / size))
-    nx.draw_networkx_edges(G,pos, alpha=0.5)
-    plt.show()
+    partition = cm.best_partition(G)
+    for com in set(partition.values()):
+        list_nodes = [nodes for nodes in partition.keys() if partition[nodes] == com]
+        nx.subgraph(F, list_nodes)
+        # with all the connecting eges ... and relabel it
+        ego = nx.subgraph(F, list_nodes)
+        nodes = ego_nodes.reindex(ego)
+        nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
+
+        #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
+        nx.set_node_attributes(ego, nodes["country_codes"], "cc")
+        nx.set_node_attributes(ego, nodes["type"], "ty")
+        nx.set_node_attributes(ego, nodes["name"], "nm")
+        # get rid of null and turn the list into a dictionary
+        valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
+        ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
+        # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
+        #                                 & nodes.name.isnull()].address)
+        nx.relabel_nodes(ego, valid_names)
+    ego = build_community_subgroup(G, nodes):
+    GeneralGraph(ego, 'partition-modularity')
+    # nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
+    #                             node_color = str(count / size))
+    # nx.draw_networkx_edges(G,pos, alpha=0.5)
+    # plt.show()
 
 
-if __name__ == '__main__':
-    # F, all_nodes = load_clean_data() # Import and clean
-    # ego = build_subgraph(F, all_nodes ) # Create subgroup
-    # GeneralGraph(ego, filename = "ego_3") #Generages image in Gephi
+# if __name__ == '__main__':

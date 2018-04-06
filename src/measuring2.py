@@ -1,9 +1,11 @@
 import pandas as pd
+import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 import community as cm
 from operator import itemgetter
 
+## Centrality realted functions
 def comparing_centralities(G):
     '''
     This function campares centralities
@@ -13,12 +15,12 @@ def comparing_centralities(G):
     OUPUT: Returns a data frame of all pair wise correlation
     between the centralities
     '''
-    col = nx.closeness_centrality(ego)
-    har = nx.harmonic_centrality(ego)
-    bet = nx.betweenness_centrality(ego)
-    dgr = nx.degree_centrality(ego)
-    pgr = nx.pagerank(ego)
-    eig = nx.eigenvector_centrality(ego, max_iter = 500)
+    col = nx.closeness_centrality(G)
+    har = nx.harmonic_centrality(G)
+    bet = nx.betweenness_centrality(G)
+    dgr = nx.degree_centrality(G)
+    pgr = nx.pagerank(G)
+    eig = nx.eigenvector_centrality(G, max_iter = 500)
     # Converts into pandas series
     centralities = pd.concat([pd.Series(c) for c in (eig, pgr, har, col, dgr, bet)], axis = 1)
     # Concatentates all vectors into a pd.DataFrame
@@ -32,6 +34,7 @@ def comparing_centralities(G):
     c_df *= ll_triangle
     c_series = c_df.stack().sort_values()
     c_series.tail()
+    # return centralities, c_series.tail()
 
 def max_sort_centrality(mydict, num):
     '''
@@ -91,7 +94,7 @@ def my_attribute_assortativity_coefficient(G, feature):
 
 def my_louvian_modularity(G):
     '''
-    THe modularity, m, is the fraction of edges that fall within the given
+    THe modularity, Q, is the fraction of edges that fall within the given
     communities minus the expected fraction if edges were distributed at random,
     while conserving the node's degrees.
     ------------------
@@ -123,7 +126,7 @@ def modularity_based_communities(G):
     community_size = part_as_series.value_counts() #size of communite
     return part_as_series, community_size
 
-## Tools 
+## Tools
 def filter_nodes_by_degree(G, all_nodes, k):
     '''
     GOAL: this function removes all nodes of a graph G of
@@ -157,12 +160,11 @@ def filter_nodes_by_degree(G, all_nodes, k):
 def edge_analysis(G, attr = 'intermediary'):
     '''
     Find the average number of degree a node with a certain attribute
-
     INPUT:
     - G, instantiated newtorkx graph
     - attr, is a string of the attribute you want to explore
     OUPUT:
-    - 'dgre_connectivity_dict', is a dictionary of the
+    - 'degrees_connectivity_dict', is a dictionary of the
     - 'mean_degrees', the average number of degrees the nodes
         of a certain attribute has
     '''
@@ -170,14 +172,14 @@ def edge_analysis(G, attr = 'intermediary'):
     # intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
     # idx_nodes = all_nodes[all_nodes.type == 'intermediary'].index
     # foo = intermediaries.name
-    nodes_of_interest = node_attr(G, attr = 'intermediary')
-    dgr_connectivity_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
+    nodes_of_interest = node_attr(G, attr = attr)
+    degrees_connectivity_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
 
     # nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
     # nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
-    mean_degrees = [v  for k,v in ego.degree(nodes_of_interest)]
+    mean_degrees = [v  for k,v in G.degree(nodes_of_interest)]
 
-    return dgre_connectivity_dict, mean_degrees
+    return degrees_connectivity_dict, mean_degrees
 
 def node_attr(G, attr = 'intermediary'):
     return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
@@ -208,14 +210,12 @@ def plot_hist_avg_degrees(G, attr):
     - returns histogram of mean_degrees
     '''
     # if G and attr:
-    mean_degrees = edge_analysis(G, attr = 'intermediary')
-    plt.hist(mean_degrees, bins = 50)
+    tmp = edge_analysis(G, attr = 'intermediary')
+    plt.hist(tmp[1], bins = 50)
     plt.xlabel('The Mean Degree Per Node For {}'.format(attr))
     plt.ylabel('Frequency of Mean Degree')
+    plt.title('Distribution of Mean Degrees For {} Nodes'.format(attr))
     # else:
     #     plt.hist(mean_degeers, bins = 20)
 
-if __name__ == '__main__':
-
-
-    # nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
+# nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
