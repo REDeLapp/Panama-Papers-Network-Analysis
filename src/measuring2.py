@@ -5,7 +5,25 @@ import matplotlib.pyplot as plt
 import community as cm
 from operator import itemgetter
 
-## Centrality realted functions
+def all_my_centralities(G):
+    '''
+    GOAL: all the centralities
+    INPUT: G, a networkx graph.
+    OUPUT: a list of Dictionary of nodes with degree centrality as the value
+            for each centrality metrics.
+    '''
+    col = nx.closeness_centrality(G)
+    har = nx.harmonic_centrality(G)
+    bet = nx.betweenness_centrality(G)
+    dgr = nx.degree_centrality(G)
+    pgr = nx.pagerank(G)
+    eig = nx.eigenvector_centrality(G, max_iter = 500)
+    hits = nx.hits(G)
+
+    har /= len(har) # Normalize the Harmonic Closeness
+
+    return [col, har, bet, dgr, pgr, eig, hit[0]]
+## Centrality related functions
 def comparing_centralities(G):
     '''
     This function campares centralities
@@ -21,10 +39,12 @@ def comparing_centralities(G):
     dgr = nx.degree_centrality(G)
     pgr = nx.pagerank(G)
     eig = nx.eigenvector_centrality(G, max_iter = 500)
+    hits = nx.hits(G)
+
     # Converts into pandas series
-    centralities = pd.concat([pd.Series(c) for c in (eig, pgr, har, col, dgr, bet)], axis = 1)
+    centralities = pd.concat([pd.Series(c) for c in (eig, pgr, har, col, dgr, bet, hits[0])], axis = 1)
     # Concatentates all vectors into a pd.DataFrame
-    centralities.columns = ["Eigenvector", "PageRank", "Harmonic Closeness", "Closeness", "Degree", "Betweenness"]
+    centralities.columns = ["Eigenvector", "PageRank", "Harmonic Closeness", "Closeness", "Degree", "Betweenness", "Hubs"]
     # Harmonic Closeness is the only NetworkX centrality that is not returned normalized
     centralities["Harmonic Closeness"] /= centralities.shape[0] # Normalize the Harmonic Closeness
 
@@ -40,12 +60,12 @@ def max_sort_centrality(mydict, num):
     '''
     -------------------------------------------
     INPUT:
-    - mydict, give a dictionary of centrality
-    - num, the number to
+    - mydict, give a dictionary of centralies
+    - num, the limit of the top maximum centralities
     OUPUT: returns the node_id index on the names of the
     '''
     sred = sorted(mydict.items(), key=lambda value:float(value[1]))
-    sorted(mydict, key=mydict.get).lemit(num)
+    sorted(mydict, key=mydict.get).limit(num)
 
 def plot_harmonic_closeness_eigen(G):
     '''

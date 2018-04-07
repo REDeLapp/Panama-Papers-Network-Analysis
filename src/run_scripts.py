@@ -104,14 +104,20 @@ def k_mean_cluster(G):
     labels = np.ravel(np.sign(f))
     pass
 
-def build_
+def plot_hist_size_partition():
+    unique_size = len(unique(list(partition.values())))
+    plt.hist(partition.values(), bins = unique_size)
+    plt.xlabel('The Number of Node In Partition')
+    plt.ylabel('Frequency of Partition Size')
+    plt.title('Distribution of Partition Size in Nodes')
+
 if __name__ == '__main__':
     # F, all_nodes = load_clean_data() # Import and clean
     # ego = build_subgraph(F, all_nodes ) # Create subgroup
     # GeneralGraph(ego, filename = "ego_3") #Generages image in Gephi
     G, all_nodes = lg.load_clean_data() # Import and clean
     ego = lg.build_subgraph(G, all_nodes ) # Create subgroup
-    lg.GeneralGraph(ego, filename = "consolidation") #Generages image in Gephi
+    lg.GeneralGraph(ego, filename = "consolidation_nulls") #Generages image in Gephi
     # f = filter_nodess_by_degree(ego, all_nodes, k=3)
     # lg.GeneralGraph(ego, filename = "ego_filter_k_3")
     # # DiGraphMatcher.subgraph_is_isomorphic(f,ego)

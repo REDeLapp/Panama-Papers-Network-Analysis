@@ -89,7 +89,10 @@ def build_subgraph(F, all_nodes):
     ego = nx.subgraph(F, nodes_of_interest)
     nodes = all_nodes.reindex(ego)
     nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
-
+    # nodes = nodes.fillna('Unknown')
+    nodes = nodes.replace(np.nan, 'Unknown', regex=True)
+    nodes = nodes.replace(pd.isnull, 'Unknown', regex=True)
+    nodes = nodes[nodes["type"].notnull()]
     #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
     nx.set_node_attributes(ego, nodes["country_codes"], "cc")
     nx.set_node_attributes(ego, nodes["type"], "ty")
@@ -116,12 +119,15 @@ def GeneralGraph(G, filename):
         nx.write_graphml(G, ofile)
     pass
 
-def split_graph(G, ego_nodes):
+def split_graph(G, ego_nodes, part_type):
+    if part_type == 'dendrogram':
+        partition = cm.generate_dendrogram(G)
+    else:
     #first compute the best partition
-    partition = cm.best_partition(G)
+        partition = cm.best_partition(G) # Louvian
     for com in set(partition.values()):
         list_nodes = [nodes for nodes in partition.keys() if partition[nodes] == com]
-        nx.subgraph(F, list_nodes)
+        ego[com] = nx.subgraph(F, list_nodes)
         # with all the connecting eges ... and relabel it
         ego = nx.subgraph(F, list_nodes)
         nodes = ego_nodes.reindex(ego)
@@ -137,8 +143,8 @@ def split_graph(G, ego_nodes):
         # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
         #                                 & nodes.name.isnull()].address)
         nx.relabel_nodes(ego, valid_names)
-    ego = build_community_subgroup(G, nodes):
-    GeneralGraph(ego, 'partition-modularity')
+    # ego = build_community_subgroup(G, nodes)
+    # GeneralGraph(ego, 'partition-modularity')
     # nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
     #                             node_color = str(count / size))
     # nx.draw_networkx_edges(G,pos, alpha=0.5)
