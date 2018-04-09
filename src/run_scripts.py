@@ -106,11 +106,16 @@ def k_mean_cluster(G):
 
 def create_hc(G):
     """Creates hierarchical cluster of graph G from distance matrix"""
+    # No other function uses these libraries, so i'm putting them within this function.
+    from scipy.cluster import hierarchy
+    from scipy.spatial import distance
+    # Find the shortest path/edge between nodes
     path_length = nx.all_pairs_shortest_path_length(G)
-    distances = np.zeros((len(G), len(G)))
-    for u, p in path_length:
-        for v, d in p.items():
-            distances[u][v] = d
+    distances = np.zeros((len(G), len(G))) #distance matrix
+    d = [distances[u][v] for v, d in p.items() for u, p in path_length ]
+    # for u, p in path_length:
+    #     for v, d in p.items():
+    #         distances[u][v] = d
     # Create hierarchical cluster
     Y = distance.squareform(distances)
     Z = hierarchy.complete(Y)  # Creates HC using farthest point linkage
@@ -135,14 +140,14 @@ if __name__ == '__main__':
     # GeneralGraph(ego, filename = "ego_3") #Generages image in Gephi
     G, all_nodes = lg.load_clean_data() # Import and clean
     ego = lg.build_subgraph(G, all_nodes ) # Create subgroup
-    lg.GeneralGraph(ego, filename = "consolidation_nulls") #Generages image in Gephi
+    lg.GeneralGraph(ego, filename = "replace_nan_unknown_no_regex") #Generages image in Gephi
     # f = filter_nodess_by_degree(ego, all_nodes, k=3)
     # lg.GeneralGraph(ego, filename = "ego_filter_k_3")
     # # DiGraphMatcher.subgraph_is_isomorphic(f,ego)
     Q = msr.my_louvian_modularity(ego)
 
-    df_centralities = msr.comparing_centralities(ego)
-    md_centralities = pandas_df_to_markdown_table(df_centralities)
-
-    dgre_connectivity_dict, mean_degrees = msr.edge_analysis(ego, attr = 'intermediary')
-    msr.plot_hist_avg_degrees(ego, attr = 'intermediary')
+    # df_centralities = msr.comparing_centralities(ego)
+    # md_centralities = pandas_df_to_markdown_table(df_centralities)
+    #
+    # dgre_connectivity_dict, mean_degrees = msr.edge_analysis(ego, attr = 'intermediary')
+    # msr.plot_hist_avg_degrees(ego, attr = 'intermediary')

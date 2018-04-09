@@ -48,11 +48,11 @@ def load_clean_data():
 
     # all_nodes['type'].dropna
 
-    if "ISSUES OF:" in F:
-        F.remove_node("ISSUES OF:")
-
-    if "" in F:
-        F.remove_node("")
+    # if "ISSUES OF:" in F:
+    #     F.remove_node("ISSUES OF:")
+    #
+    # if "" in F:
+    #     F.remove_node("")
     return F, all_nodes
 
 def build_subgraph(F, all_nodes):
@@ -85,20 +85,16 @@ def build_subgraph(F, all_nodes):
     ego = nx.subgraph(F, nodes_of_interest)
     nodes = all_nodes.reindex(ego)
     nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
-    # nodes = nodes.fillna('Unknown')
-    # nodes = nodes.replace(np.nan, 'Unknown', regex=True)
-    # nodes = nodes.replace(pd.isnull, 'Unknown', regex=True)
-    # nodes = nodes[nodes["type"].notnull()]
+    nodes = nodes.replace(np.nan, 'Unknown') # Replace 'NaN' will "Unknown"
+
     #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
     nx.set_node_attributes(ego, nodes["country_codes"], "cc")
     nx.set_node_attributes(ego, nodes["type"], "ty")
     nx.set_node_attributes(ego, nodes["name"], "nm")
+
     # get rid of null and turn the list into a dictionary
     valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-    ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
-    # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
-    #                                 & nodes.name.isnull()].address)
-    nx.relabel_nodes(ego, valid_names)
+    ego = nx.relabel_nodes(ego, valid_names)
 
     # ego_edges = filter(lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0, g.edges())
     # ego.add_edges_from(ego_edges)
@@ -117,7 +113,7 @@ def GeneralGraph(G, filename):
 
 def split_graph(G, ego_nodes, part_type):
     #first compute the best partition
-        partition = cm.best_partition(G) # Louvian
+    partition = cm.best_partition(G) # Louvian
     for com in set(partition.values()):
         list_nodes = [nodes for nodes in partition.keys() if partition[nodes] == com]
         ego[com] = nx.subgraph(F, list_nodes)
@@ -144,6 +140,6 @@ def split_graph(G, ego_nodes, part_type):
     # plt.show()
 
 def my_community_dendrogram(G):
-    pass 
+    pass
 
 # if __name__ == '__main__':
