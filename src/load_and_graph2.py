@@ -48,12 +48,11 @@ def load_clean_data():
 
     # all_nodes['type'].dropna
 
-    # clear NAN's
-    # if "ISSUES OF:" in F:
-    #     F.remove_node("ISSUES OF:")
-    #
-    # if "" in F:
-    #     F.remove_node("")
+    if "ISSUES OF:" in F:
+        F.remove_node("ISSUES OF:")
+
+    if "" in F:
+        F.remove_node("")
     return F, all_nodes
 
 def build_subgraph(F, all_nodes):
@@ -70,10 +69,7 @@ def build_subgraph(F, all_nodes):
     '''
 
     # We only want to look at Saudi Arabia and, maybe, Jordan
-    # CCODES = ["SAU", "JOR"] # country code to be examined in subgraph
-    # CCODES = "UZB", "TKM", "KAZ", "KGZ", "TJK"
     CCODES = "SAU", "JOR"
-    #seeds = all_nodes[all_nodes["country_codes"] == 'SAU'].index
     seeds = all_nodes[all_nodes["country_codes"].isin(CCODES)].index
 
     # # Next Computes the shortest path from the node seed to all reachable nodes that
@@ -90,9 +86,9 @@ def build_subgraph(F, all_nodes):
     nodes = all_nodes.reindex(ego)
     nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
     # nodes = nodes.fillna('Unknown')
-    nodes = nodes.replace(np.nan, 'Unknown', regex=True)
-    nodes = nodes.replace(pd.isnull, 'Unknown', regex=True)
-    nodes = nodes[nodes["type"].notnull()]
+    # nodes = nodes.replace(np.nan, 'Unknown', regex=True)
+    # nodes = nodes.replace(pd.isnull, 'Unknown', regex=True)
+    # nodes = nodes[nodes["type"].notnull()]
     #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
     nx.set_node_attributes(ego, nodes["country_codes"], "cc")
     nx.set_node_attributes(ego, nodes["type"], "ty")
@@ -120,9 +116,6 @@ def GeneralGraph(G, filename):
     pass
 
 def split_graph(G, ego_nodes, part_type):
-    if part_type == 'dendrogram':
-        partition = cm.generate_dendrogram(G)
-    else:
     #first compute the best partition
         partition = cm.best_partition(G) # Louvian
     for com in set(partition.values()):
@@ -150,5 +143,7 @@ def split_graph(G, ego_nodes, part_type):
     # nx.draw_networkx_edges(G,pos, alpha=0.5)
     # plt.show()
 
+def my_community_dendrogram(G):
+    pass 
 
 # if __name__ == '__main__':

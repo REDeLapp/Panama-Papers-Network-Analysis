@@ -104,6 +104,24 @@ def k_mean_cluster(G):
     labels = np.ravel(np.sign(f))
     pass
 
+def create_hc(G):
+    """Creates hierarchical cluster of graph G from distance matrix"""
+    path_length = nx.all_pairs_shortest_path_length(G)
+    distances = np.zeros((len(G), len(G)))
+    for u, p in path_length:
+        for v, d in p.items():
+            distances[u][v] = d
+    # Create hierarchical cluster
+    Y = distance.squareform(distances)
+    Z = hierarchy.complete(Y)  # Creates HC using farthest point linkage
+    # This partition selection is arbitrary, for illustrive purposes
+    membership = list(hierarchy.fcluster(Z, t=1.15))
+    # Create collection of lists for blockmodel
+    partition = defaultdict(list)
+    for n, p in zip(list(range(len(G))), membership):
+        partition[p].append(n)
+
+
 def plot_hist_size_partition():
     unique_size = len(unique(list(partition.values())))
     plt.hist(partition.values(), bins = unique_size)

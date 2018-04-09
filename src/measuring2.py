@@ -64,6 +64,12 @@ def max_sort_centrality(mydict, num):
     - num, the limit of the top maximum centralities
     OUPUT: returns the node_id index on the names of the
     '''
+
+    top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
+               key=lambda x: x[2], reverse=True)[:10]
+
+    print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
+
     sred = sorted(mydict.items(), key=lambda value:float(value[1]))
     sorted(mydict, key=mydict.get).limit(num)
 
