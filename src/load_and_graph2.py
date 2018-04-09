@@ -2,6 +2,7 @@ import networkx as nx
 import community as cm
 import pandas as pd
 import numpy as np
+from collections import defaultdict
 import matplotlib.pyplot as plt
 # %matplotlib inline
 
@@ -55,7 +56,7 @@ def load_clean_data():
     #     F.remove_node("")
     return F, all_nodes
 
-def build_subgraph(F, all_nodes):
+def build_subgraph(F, all_nodes, my_cutoff = 2):
     '''
     GOAL: This function build the subgraph of the notes_of_interest, creates the graph,
     and then saves the figure.
@@ -63,7 +64,8 @@ def build_subgraph(F, all_nodes):
     INPUT:
         - 'F' is the NetworkX graph from Pandas DataFrame.
         - 'all_nodes', is the concatenation of all node lists into one dataframe.
-        - 'cc'... [edit]
+        - 'my_cutoff' (integer, optional) – Depth to stop the search. Only paths
+            of length <= cutoff are returned. Default is set to two.
     OUPUT:
         - 'ego' is a subgraph of the countries of interest.
     '''
@@ -75,7 +77,7 @@ def build_subgraph(F, all_nodes):
     # # Next Computes the shortest path from the node seed to all reachable nodes that
     # # are cutoff hops away and closer.  The function returns a dictionary with the target nodes as keys,
     # # so the keys are the cutoff-neighborhood of the seed.
-    nodes_of_interest = set.union(*[set(nx.single_source_shortest_path_length(F, seed, cutoff = 2).keys())
+    nodes_of_interest = set.union(*[set(nx.single_source_shortest_path_length(F, seed, cutoff = my_cutoff).keys())
                                    for seed in seeds])
     # nodes_of_interest = [elem.nodes() for elem in nx.connected_component_subgraphs(F)
     #                     if nx.number_of_nodes(elem) >= 3
@@ -83,6 +85,9 @@ def build_subgraph(F, all_nodes):
     # Extract the subgraph that contains all the keys for all the dictionaries
     # with all the connecting eges ... and relabel it
     ego = nx.subgraph(F, nodes_of_interest)
+    ego = reattach_attributes_of_interest(ego)
+
+    '''
     nodes = all_nodes.reindex(ego)
     nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
     nodes = nodes.replace(np.nan, 'Unknown') # Replace 'NaN' will "Unknown"
@@ -94,11 +99,30 @@ def build_subgraph(F, all_nodes):
 
     # get rid of null and turn the list into a dictionary
     valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-    ego = nx.relabel_nodes(ego, valid_names)
+    ego = nx.relabel_nodes(ego, valid_names)'''
 
     # ego_edges = filter(lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0, g.edges())
     # ego.add_edges_from(ego_edges)
     return ego
+def reattach_attributes_of_interest(ego):
+    '''
+    Re-attaches attributes for country_code, type, and name to the networkx graph
+    INPUT: ego, is the instantiated NetworkX graph
+    OUTPUT: returns ego_attached with the attributes reattached and the nodes relabled
+    '''
+    nodes = all_nodes.reindex(ego)
+    nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
+    nodes = nodes.replace(np.nan, 'Unknown') # Replace 'NaN' will "Unknown"
+
+    #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
+    nx.set_node_attributes(ego, nodes["country_codes"], "cc")
+    nx.set_node_attributes(ego, nodes["type"], "ty")
+    nx.set_node_attributes(ego, nodes["name"], "nm")
+
+    # get rid of null and turn the list into a dictionary
+    valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
+    ego_attached = nx.relabel_nodes(ego, valid_names)
+    return ego_attached
 
 def GeneralGraph(G, filename):
     '''
@@ -111,14 +135,23 @@ def GeneralGraph(G, filename):
         nx.write_graphml(G, ofile)
     pass
 
-def split_graph(G, ego_nodes, part_type):
+def split_graph(ego, ego_nodes, part_type):
+    '''
+    GOAL: create 'n' separate split graphas based of community. The
+    default partition metric is Louvian modularity. This may change
+    INPUT:
+    - 'ego', this is the subgraph of the generalize NetworkX graph
+    OUPUT:
+    '''
     #first compute the best partition
-    partition = cm.best_partition(G) # Louvian
-    for com in set(partition.values()):
+    partition = cm.best_partition(ego) # Louvian
+    # partition = cm.partition_at_level((ego)
+    for part_keys, com in partition.items():
+    # for com in set(partition.values()):
         list_nodes = [nodes for nodes in partition.keys() if partition[nodes] == com]
-        ego[com] = nx.subgraph(F, list_nodes)
+        ego[com] = nx.subgraph(ego, list_nodes)
         # with all the connecting eges ... and relabel it
-        ego = nx.subgraph(F, list_nodes)
+        ego = nx.subgraph(ego, list_nodes)
         nodes = ego_nodes.reindex(ego)
         nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
 
@@ -128,10 +161,11 @@ def split_graph(G, ego_nodes, part_type):
         nx.set_node_attributes(ego, nodes["name"], "nm")
         # get rid of null and turn the list into a dictionary
         valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-        ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
+        nx.relabel_nodes(ego, valid_names)
+        # ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
         # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
         #                                 & nodes.name.isnull()].address)
-        nx.relabel_nodes(ego, valid_names)
+
     # ego = build_community_subgroup(G, nodes)
     # GeneralGraph(ego, 'partition-modularity')
     # nx.draw_networkx_nodes(G, pos, list_nodes, node_size = 20,
@@ -139,7 +173,17 @@ def split_graph(G, ego_nodes, part_type):
     # nx.draw_networkx_edges(G,pos, alpha=0.5)
     # plt.show()
 
-def my_community_dendrogram(G):
+def my_community_dendogram(G):
+    #Find communities in the graph
+    dendo = nx.generate_dendogram(G)
+
+    # partition of the nodes at the given level
+    cm.partition_at_level(dendo, len(dendo) - 1 )
+     for level in range(len(dendo) - 1) :
+         print("partition at level", level, "is", cm.partition_at_level(dendo, level))
+
+    part = cm.best_partition(G)
+    induced_G = cm.induced_graph(part, G) #graph where nodes are the communities
     pass
 
 # if __name__ == '__main__':

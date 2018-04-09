@@ -1,6 +1,9 @@
 import networkx as nx
 import load_and_graph2 as lg
 import measuring2 as msr
+import numpy as np
+from collections import defaultdict
+
 
 # def filter_nodes_by_degree(G, all_nodes, k):
 #     '''
@@ -94,6 +97,8 @@ import measuring2 as msr
 #     #     plt.hist(mean_degeers, bins = 20)
 
 def k_mean_cluster(G):
+    import numpy.linalg as la
+    import scipy.cluster.vq as vq
     A = nx.adjacency_matrix(G)
     D = np.diag(np.ravel(np.sum(A,axis=1)))
     L = D - A
@@ -102,20 +107,35 @@ def k_mean_cluster(G):
     l, U = la.eigh(np.cov(L))
     f = U[:,1]
     labels = np.ravel(np.sign(f))
-    pass
+    k = 3
+    means, lables = vq.kmeans2(U[:,1:k],k)
+    lg.GeneralGraph(f, 'k_means')
+    return means, lables
+
 
 def create_hc(G):
     """Creates hierarchical cluster of graph G from distance matrix"""
     # No other function uses these libraries, so i'm putting them within this function.
     from scipy.cluster import hierarchy
     from scipy.spatial import distance
+    labels = G.nodes()
     # Find the shortest path/edge between nodes
     path_length = nx.all_pairs_shortest_path_length(G)
     distances = np.zeros((len(G), len(G))) #distance matrix
-    d = [distances[u][v] for v, d in p.items() for u, p in path_length ]
+    # d = [distances[u][v] for v, d in p.items() for u, p in path_length ]
     # for u, p in path_length:
     #     for v, d in p.items():
     #         distances[u][v] = d
+    i = 0
+    for u,p in path_length.items():
+        j = 0
+        for v,d in p.items():
+            distance[i][j] = d
+            distance[j][i] = d
+            if i==j:
+                distance[i][j]=0
+            j+=1
+        i+=1
     # Create hierarchical cluster
     Y = distance.squareform(distances)
     Z = hierarchy.complete(Y)  # Creates HC using farthest point linkage
@@ -125,9 +145,27 @@ def create_hc(G):
     partition = defaultdict(list)
     for n, p in zip(list(range(len(G))), membership):
         partition[p].append(n)
+    return list(partition.values())
 
+def create_hc2(G):
+    """Creates hierarchical cluster of graph G from distance matrix"""
+    path_length=nx.all_pairs_shortest_path_length(G)
+    distances=numpy.zeros((len(G),len(G)))
+    for u,p in path_length.items():
+        for v,d in p.items():
+            distances[u][v]=d
+    # Create hierarchical cluster
+    Y=distance.squareform(distances)
+    Z=hierarchy.complete(Y)  # Creates HC using farthest point linkage
+    # This partition selection is arbitrary, for illustrive purposes
+    membership=list(hierarchy.fcluster(Z,t=1.15))
+    # Create collection of lists for blockmodel
+    partition=defaultdict(list)
+    for n,p in zip(list(range(len(G))),membership):
+        partition[p].append(n)
+    return list(partition.values())
 
-def plot_hist_size_partition():
+def plot_hist_size_partition(partition):
     unique_size = len(unique(list(partition.values())))
     plt.hist(partition.values(), bins = unique_size)
     plt.xlabel('The Number of Node In Partition')
@@ -146,6 +184,43 @@ if __name__ == '__main__':
     # # DiGraphMatcher.subgraph_is_isomorphic(f,ego)
     Q = msr.my_louvian_modularity(ego)
 
+    '''
+    What does create_HC look like?
+    '''
+    # Extract largest connected component into graph H
+    H = next(nx.connected_component_subgraphs(ego))
+    # Makes life easier to have consecutively labeled integer nodes
+    H = nx.convert_node_labels_to_integers(H)
+    # Create parititions with hierarchical clustering
+    partitions = create_hc(H)
+    # Build blockmodel graph
+    BM = nx.quotient_graph(H, partitions, relabel=True)
+
+    # Draw original graph
+    pos = nx.spring_layout(H, iterations=100)
+    plt.subplot(211)
+    nx.draw(H, pos, with_labels=False, node_size=10)
+
+    # Draw block model with weighted edges and nodes sized by number of internal nodes
+    node_size = [BM.nodes[x]['nnodes'] * 10 for x in BM.nodes()]
+    edge_width = [(2 * d['weight']) for (u, v, d) in BM.edges(data=True)]
+    # Set positions to mean of positions of internal nodes from original graph
+    posBM = {}
+    for n in BM:
+        xy = numpy.array([pos[u] for u in BM.nodes[n]['graph']])
+        posBM[n] = xy.mean(axis=0)
+    plt.subplot(212)
+    nx.draw(BM, posBM, node_size=node_size, width=edge_width, with_labels=False)
+    plt.axis('off')
+    plt.show()
+
+    '''
+    Playing with block model
+    '''
+
+    cluster=create_hc(ego)
+    M = nx.blockmodel(ego, clusters)
+    net.draw(M)
     # df_centralities = msr.comparing_centralities(ego)
     # md_centralities = pandas_df_to_markdown_table(df_centralities)
     #

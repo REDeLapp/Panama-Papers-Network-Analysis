@@ -55,6 +55,17 @@ def comparing_centralities(G):
     c_series = c_df.stack().sort_values()
     c_series.tail()
     # return centralities, c_series.tail()
+def top_ten_nodes_with_highest_degree(G):
+    '''
+    GOAL: Find the top ten nodes with the highest degrees
+    INPUT: G, networkx graph
+    OUPUT: a sorted list
+    '''
+    top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
+               key=lambda x: x[2], reverse=True)[:10]
+
+    print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
+    return top10
 
 def max_sort_centrality(mydict, num):
     '''
@@ -65,13 +76,13 @@ def max_sort_centrality(mydict, num):
     OUPUT: returns the node_id index on the names of the
     '''
 
-    top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
-               key=lambda x: x[2], reverse=True)[:10]
-
-    print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
+    # top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
+    #            key=lambda x: x[2], reverse=True)[:10]
+    #
+    # print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
 
     sred = sorted(mydict.items(), key=lambda value:float(value[1]))
-    sorted(mydict, key=mydict.get).limit(num)
+    return sorted(mydict, key=mydict.get).limit(num)
 
 def plot_harmonic_closeness_eigen(G):
     '''
@@ -104,9 +115,14 @@ def plot_avg_nieghbor_degree_node_degree(G):
     my_degree, their_degree = zip(*nx.average_degree_connectivity(G).items())
     ax.scatter(my_degree, their_degree , c='black', alpha=0.5, edgecolors='none')
     # ax.abline(intercept=0, slope=1)
+    # ax.abline(np.log(1):np.log(3), 1000/np.log(1):1000/np.log(3):)
     ax.set_yscale('log')
     ax.set_xscale('log')
-    pass
+    plt.xlabel('Node Degree')
+    plt.ylabel('Average Neighbor Degree')
+    plt.title('A scatter plot of the node degree versus Avg Nieghbor degree')
+    plt.show()
+
 
 def my_attribute_assortativity_coefficient(G, feature):
     '''
@@ -135,6 +151,8 @@ def my_louvian_modularity(G):
 
 def modularity_based_communities(G):
     '''
+    GAOL: to partition the graph by its louvian modularity and return 'k' communites
+    with the hightest modularity.
     ----------------------------------
     INPUT: Networkx graph network
     OUPUT:
@@ -208,6 +226,14 @@ def edge_analysis(G, attr = 'intermediary'):
     return degrees_connectivity_dict, mean_degrees
 
 def node_attr(G, attr = 'intermediary'):
+    '''
+    GOAL: return only the node of a certain attribute, attr
+    INPUT:
+    -G, instanciated Newtorkx graph
+    - attr, is the attritbute on which you want to select nodes
+    OUPUT:
+    returns all nodes that have a specific attribute
+    '''
     return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
 
 def pandas_df_to_markdown_table(df):
@@ -235,7 +261,7 @@ def plot_hist_avg_degrees(G, attr):
     OUPUT:
     - returns histogram of mean_degrees
     '''
-    # if G and attr:
+    # tmp is a list of degrees_connectivity_dict, mean_degrees
     tmp = edge_analysis(G, attr = 'intermediary')
     plt.hist(tmp[1], bins = 50)
     plt.xlabel('The Mean Degree Per Node For {}'.format(attr))
@@ -244,4 +270,31 @@ def plot_hist_avg_degrees(G, attr):
     # else:
     #     plt.hist(mean_degeers, bins = 20)
 
+def plot_degree_vs_frequency(G):
+    deg = nx.degree(G)
+    x,y = zip(*Counter(deg.values()).items())
+    ptl.scatter(x,y)
+    plt.xlabel('Degree')
+    plt.ylabel('Frequency')
+    plt.title('Barabasi-Albert Network Check')
+
+def plot_degree_vs_clustering(G,ego):
+    """
+    The clustering coeff is a measure of hte prevalence of triangles in an egocentric netowrk
+    The clustering coeff is a fraction of possible triangles that contain the ego node and the exist
+
+    """
+    deg = nx.degree(G)
+    cc = nx.clustering(nx.Graph(G),ego)
+    ptl.scatter(x,y)
+    plt.xlabel('Degrees')
+    plt.ylabel('Clustering Coefficient (cc)')
+    plt.title('Degrees Versus Clustering Coefficient')
+    # else:
 # nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
+def plot_hist_size_partition(partition):
+    unique_size = len(unique(list(partition.values())))
+    plt.hist(partition.values(), bins = unique_size)
+    plt.xlabel('The Number of Node In Partition')
+    plt.ylabel('Frequency of Partition Size')
+    plt.title('Distribution of Partition Size in Nodes')
