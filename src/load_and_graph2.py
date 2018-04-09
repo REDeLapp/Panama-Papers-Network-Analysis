@@ -20,14 +20,16 @@ def load_clean_data():
     - 'all_nodes', is the concatenation of all node lists into one dataframe
     '''
     # Read the edge list and convert it to network
-    edges = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv')
+    edges = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv')
+    # /Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv
+    # /Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv
     edges = edges[edges["TYPE"] != "registrated address"]
     F = nx.from_pandas_dataframe(edges, "START_ID", "END_ID") # Return a graph from Pandas DataFrame.
 
     # Read node lists
-    officers       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_officer.csv', index_col = "node_id")
-    intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
-    entities       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_entity.csv', index_col = "node_id")
+    officers       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_nodes_officer.csv', index_col = "node_id")
+    intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
+    entities       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_nodes_entity.csv', index_col = "node_id")
     # addresses      = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_address.csv', index_col = "node_id")
 
     # Combine the node lists into one dataframe
