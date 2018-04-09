@@ -3,14 +3,35 @@
 ## The Project
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
-Why you should care... TBD
+Journalism
+Jordan and financial reform
+
+Understanding the social relationships identified within the Panama Papers may lead to a clearer understanding of how these methods of offshore structures are used to transfer money between Jordan and Saudi Arabia
+
+Jordan-Saudi Arabia connection
+
+We then computed several centrality measure and report our observations in order to identify the key players.
 
 ## The Process
-TBD
+1) Load data
+2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia and The Hishamite Kingdom of Jordan.
+3) Generate initial graph, ego, in Gephi using ForceAtlas2
+  i) Build intuition by looking at the structure.
+  ii) Look at centralities  
+4) Analyze community structures based on Louvian modularity, Q.
+    i) edge analysis
+    ii) centralities within Q_i-community
+5) Split subgraph, ego, into the following graphs:
+    i) modularity
+    ii) k-means
+6) Compare inter and cross variance for both modularity and k-means
+7) [Find person(s) of interest and tell a story] 
 
 ## The Data
 The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
 information on approximately 360,000 businesses and individuals in more than 200 countries linked to offshore structures and covering a time period of nearly 40 years, from 1977 to 2016.
+
+Link: https://www.occrp.org/en/panamapapers/database
 
 The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships  between  companies  and  individual  people  with  offshore  companies based in tax havens. Consists in a directed and unweighted network based on commercial  registration  of  all  types  of  companies  involved  in  the  scandal  and the existing relations type, which are:
 
@@ -72,6 +93,12 @@ How The Data Is Structured:
 ![](images/zoom.png)
 ![](images/legend_types.png)
 
+Look into intermediary
+| Type          | Average # Degrees|
+| ------------- |:-------------:|
+| intermediary | 13.1705|
+| Entity | |
+| Officer | |
 
 ## References
 1. https://offshoreleaks.icij.org/pages/database
