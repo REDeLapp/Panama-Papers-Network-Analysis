@@ -8,6 +8,7 @@ from operator import itemgetter
 def all_my_centralities(G):
     '''
     GOAL: all the centralities
+    ----------------------------------------------
     INPUT: G, a networkx graph.
     OUPUT: a list of Dictionary of nodes with degree centrality as the value
             for each centrality metrics.
@@ -58,6 +59,7 @@ def comparing_centralities(G):
 def top_ten_nodes_with_highest_degree(G):
     '''
     GOAL: Find the top ten nodes with the highest degrees
+    ----------------------------------------------
     INPUT: G, networkx graph
     OUPUT: a sorted list
     '''
@@ -69,6 +71,7 @@ def top_ten_nodes_with_highest_degree(G):
 
 def max_sort_centrality(mydict, num):
     '''
+    GOAL:
     -------------------------------------------
     INPUT:
     - mydict, give a dictionary of centralies
@@ -126,7 +129,8 @@ def plot_avg_nieghbor_degree_node_degree(G):
 
 def my_attribute_assortativity_coefficient(G, feature):
     '''
-
+    GOAL:
+    ----------------------------------------------
     INPUT:
     - 'G' is an instantiated of a networkX graph
     - 'feature' is a string of an attribute/feature you want to explore
@@ -136,7 +140,7 @@ def my_attribute_assortativity_coefficient(G, feature):
 
 def my_louvian_modularity(G):
     '''
-    THe modularity, Q, is the fraction of edges that fall within the given
+    GAOL: THe modularity, Q, is the fraction of edges that fall within the given
     communities minus the expected fraction if edges were distributed at random,
     while conserving the node's degrees.
     ------------------
@@ -153,23 +157,27 @@ def modularity_based_communities(G):
     '''
     GAOL: to partition the graph by its louvian modularity and return 'k' communites
     with the hightest modularity.
-    ----------------------------------
+    ----------------------------------------------
     INPUT: Networkx graph network
     OUPUT:
-    - the communities,
-    - their sizes,
+    - partition_as_series, the communities,
+    - community_sizes, is a pandas.core.series.Series of the Names and number of
     - which nodes belong to which community
     '''
     ## Partitions
-    # 1)dictionary with node labels as keys and int communite identifiers as value
+    # 1)dictionary with node labels as keys and integer communite identifiers as value
     # 2) calc the mdoualrity of the partition with respect to the orignial network.   sd
-    partition = cm.best_partition(G)
+    partition = cm.best_partition(G) # Louvian Modularity algorithm
     # Convert network partition into a pandas series
-    part_as_series = pd.Series(partition)
-    part_as_series.sort_values() #
+    partition_as_series = pd.Series(partition) # unsorted
+    partition_as_series_sorted = partition_as_series.sort_values(ascending=False) #
     community_size = part_as_series.value_counts() #size of communite
     return part_as_series, community_size
 
+def plot_hist_len_connected_components(G):
+    x = [len(c) for c in net.connected_component_subgraphs(G)]
+    plot.hist()
+    
 ## Tools
 def filter_nodes_by_degree(G, all_nodes, k):
     '''
@@ -196,14 +204,14 @@ def filter_nodes_by_degree(G, all_nodes, k):
     # get rid of null and turn the list into a dictionary
     valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
     f = nx.relabel_nodes(f, nodes[nodes.name.notnull()].name)
-    # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
-    #                                 & nodes.name.isnull()].address)
+                         & nodes.name.isnull()].address)
     nx.relabel_nodes(f, valid_names)
     return f
 
 def edge_analysis(G, attr = 'intermediary'):
     '''
     Find the average number of degree a node with a certain attribute
+    ----------------------------------------------
     INPUT:
     - G, instantiated newtorkx graph
     - attr, is a string of the attribute you want to explore
@@ -228,6 +236,7 @@ def edge_analysis(G, attr = 'intermediary'):
 def node_attr(G, attr = 'intermediary'):
     '''
     GOAL: return only the node of a certain attribute, attr
+    ----------------------------------------------
     INPUT:
     -G, instanciated Newtorkx graph
     - attr, is the attritbute on which you want to select nodes
@@ -239,6 +248,7 @@ def node_attr(G, attr = 'intermediary'):
 def pandas_df_to_markdown_table(df):
     '''
     GOAL: this function converts a Pandas DataFrame into a markdown table.
+    ----------------------------------------------
     INPUT: df, a pandas data frame
     OUPUT: a markdown table
     '''
@@ -253,6 +263,7 @@ def plot_hist_avg_degrees(G, attr):
     Visualizes the distribution of the average degrees for an
     attribute of interest.
     Can either be passed 'G' and 'attr' or just the 'mean_degrees'.
+    ----------------------------------------------
     INPUT:
     - G, a instanciated networkx graph
     - attr, the attribute of interest
@@ -271,6 +282,12 @@ def plot_hist_avg_degrees(G, attr):
     #     plt.hist(mean_degeers, bins = 20)
 
 def plot_degree_vs_frequency(G):
+    '''
+    GOAL:
+    ----------------------------------------------
+    INPUT:
+    OUPUT:
+    '''
     deg = nx.degree(G)
     x,y = zip(*Counter(deg.values()).items())
     ptl.scatter(x,y)
@@ -282,7 +299,7 @@ def plot_degree_vs_clustering(G,ego):
     """
     The clustering coeff is a measure of hte prevalence of triangles in an egocentric netowrk
     The clustering coeff is a fraction of possible triangles that contain the ego node and the exist
-
+    ----------------------------------------------
     """
     deg = nx.degree(G)
     cc = nx.clustering(nx.Graph(G),ego)
@@ -293,6 +310,9 @@ def plot_degree_vs_clustering(G,ego):
     # else:
 # nx.attribute_mixing_matrix(G, "country", mapping = {"SUA": 0, "JOR": 1})
 def plot_hist_size_partition(partition):
+    '''
+    ----------------------------------------------
+    '''
     unique_size = len(unique(list(partition.values())))
     plt.hist(partition.values(), bins = unique_size)
     plt.xlabel('The Number of Node In Partition')

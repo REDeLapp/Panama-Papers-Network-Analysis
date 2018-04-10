@@ -4,99 +4,10 @@ import measuring2 as msr
 import numpy as np
 from collections import defaultdict
 
-
-# def filter_nodes_by_degree(G, all_nodes, k):
-#     '''
-#     GOAL: this function removes all nodes of a graph G of
-#     degrees less than or equal to k
-#     --------------------------------------
-#     INPUT:
-#     - G, instantiated networkx graphs
-#     - 'all_nodes', is the concatenation of all node lists into one dataframe
-#     - k, the number of degree on which you want to filter
-#     OUPUT: returns a networkx graph
-#     '''
-#     # filter nodes with degree less than k
-#     nodes = all_nodes.reindex(G)
-#     nodes = nodes[~nodes.index.duplicated()]
-#     f = nx.Graph()
-#     fedges = filter(lambda x: G.degree()[x[0]] > k and G.degree()[x[1]] > k, G.edges())
-#     f.add_edges_from(fedges)
-#
-#     # reattach attribute
-#     nx.set_node_attributes(f, nodes["country_codes"], "cc")
-#     nx.set_node_attributes(f, nodes["type"], "ty")
-#     nx.set_node_attributes(f, nodes["name"], "nm")
-#     # get rid of null and turn the list into a dictionary
-#     valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-#     f = nx.relabel_nodes(f, nodes[nodes.name.notnull()].name)
-#     # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
-#     #                                 & nodes.name.isnull()].address)
-#     nx.relabel_nodes(f, valid_names)
-#     return f
-#
-# def edge_analysis(G, attr = 'intermediary'):
-#     '''
-#     Find the average number of degree a node with a certain attribute
-#
-#     INPUT:
-#     - G, instantiated newtorkx graph
-#     - attr, is a string of the attribute you want to explore
-#     OUPUT:
-#     - 'dgre_connectivity_dict', is a dictionary of the
-#     - 'mean_degrees', the average number of degrees the nodes
-#         of a certain attribute has
-#     '''
-#     # node_inter = filter(lambda n, d: d['type'] == 'intermediary', G.nodes(data=True))
-#     # intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
-#     # idx_nodes = all_nodes[all_nodes.type == 'intermediary'].index
-#     # foo = intermediaries.name
-#     nodes_of_interest = node_attr(G, attr = 'intermediary')
-#     dgr_connectivity_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
-#
-#     # nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
-#     # nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
-#     mean_degrees = [v  for k,v in ego.degree(nodes_of_interest)]
-#
-#     return dgre_connectivity_dict, mean_degrees
-#
-# def node_attr(G, attr = 'intermediary'):
-#     return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
-#
-# def pandas_df_to_markdown_table(df):
-#     '''
-#     GOAL: this function converts a Pandas DataFrame into a markdown table.
-#     INPUT: df, a pandas data frame
-#     OUPUT: a markdown table
-#     '''
-#     from IPython.display import Markdown, display
-#     fmt = ['---' for i in range(len(df.columns))]
-#     df_fmt = pd.DataFrame([fmt], columns=df.columns)
-#     df_formatted = pd.concat([df_fmt, df])
-#     display(Markdown(df_formatted.to_csv(sep="|", index=False)))
-#
-# def plot_hist_avg_degrees(G, attr):
-#     '''
-#     Visualizes the distribution of the average degrees for an
-#     attribute of interest.
-#     Can either be passed 'G' and 'attr' or just the 'mean_degrees'.
-#     INPUT:
-#     - G, a instanciated networkx graph
-#     - attr, the attribute of interest
-#     - mean_degrees, the average number of degrees the nodes
-#         of a certain attribute has.
-#     OUPUT:
-#     - returns histogram of mean_degrees
-#     '''
-#     # if G and attr:
-#     mean_degrees = edge_analysis(G, attr = 'intermediary')
-#     plt.hist(mean_degrees, bins = 50)
-#     plt.xlabel('The Mean Degree Per Node For {}'.format(attr))
-#     plt.ylabel('Frequency of Mean Degree')
-#     # else:
-#     #     plt.hist(mean_degeers, bins = 20)
-
 def k_mean_cluster(G):
+    '''
+    ----------------------------------------------
+    '''
     import numpy.linalg as la
     import scipy.cluster.vq as vq
     A = nx.adjacency_matrix(G)
@@ -113,8 +24,11 @@ def k_mean_cluster(G):
     return means, lables
 
 
-def create_hc(G):
-    """Creates hierarchical cluster of graph G from distance matrix"""
+def create_hc(G, t = 1.15):
+    """Creates hierarchical cluster of graph G from distance matrix
+    ----------------------------------------------
+    INPUT: G, instaciated networkx graph
+    OUPUT: returns list of partition values split on hierarchical cluster"""
     # No other function uses these libraries, so i'm putting them within this function.
     from scipy.cluster import hierarchy
     from scipy.spatial import distance
@@ -136,34 +50,73 @@ def create_hc(G):
                 distance[i][j]=0
             j+=1
         i+=1
+
     # Create hierarchical cluster
     Y = distance.squareform(distances)
     Z = hierarchy.complete(Y)  # Creates HC using farthest point linkage
-    # This partition selection is arbitrary, for illustrive purposes
-    membership = list(hierarchy.fcluster(Z, t=1.15))
+    membership = list(hierarchy.fcluster(Z, t=t))
     # Create collection of lists for blockmodel
     partition = defaultdict(list)
     for n, p in zip(list(range(len(G))), membership):
         partition[p].append(n)
     return list(partition.values())
 
-def create_hc2(G):
-    """Creates hierarchical cluster of graph G from distance matrix"""
+def create_hc2(G,t=1.15):
+    """Creates hierarchical cluster of graph G from distance matrix
+    This return of this function is an argument to create a blockmodel with
+    nx.quotient_graph...because nx.blockmodel is not supported by networkx v.2.0
+    ----------------------------------------------
+    INPUT:
+    G, instaciated networkx graph
+    t, is the threshold for partition selection, which is arbitrarity set to t=1.15 by default.
+    OUPUT: returns list of partition values split on hierarchical cluster"""
     path_length=nx.all_pairs_shortest_path_length(G)
-    distances=numpy.zeros((len(G),len(G)))
+    distances=np.zeros((len(G),len(G)))
     for u,p in path_length.items():
         for v,d in p.items():
             distances[u][v]=d
     # Create hierarchical cluster
     Y=distance.squareform(distances)
     Z=hierarchy.complete(Y)  # Creates HC using farthest point linkage
-    # This partition selection is arbitrary, for illustrive purposes
-    membership=list(hierarchy.fcluster(Z,t=1.15))
+    # This partition selection
+    membership=list(hierarchy.fcluster(Z,t=t)) #
     # Create collection of lists for blockmodel
     partition=defaultdict(list)
     for n,p in zip(list(range(len(G))),membership):
         partition[p].append(n)
     return list(partition.values())
+
+
+def hiclus_blockmodel(G):
+    """Draw a blockmodel diagram of a clustering alongside the original network"""
+    # Extract largest connected component into graph H
+    H=nx.connected_component_subgraphs(G)#[0]
+    # Create parititions with hierarchical clustering
+    partitions=create_hc(H)
+    # Build blockmodel graph
+    BM=nx.quotient_graph(H, partitions, create_using=nx.MultiGraph(), relabel = True)
+    lg.GeneralGraph(GM,'HC_cluster_BM')
+    # Draw original graph
+    # pos=nx.spring_layout(H,iterations=100)
+    # fig=plt.figure(1,figsize=(6,10))
+    # ax=fig.add_subplot(211)
+    # nx.draw(H,pos,with_labels=False,node_size=10)
+    # plt.xlim(0,1)
+    # plt.ylim(0,1)
+    # # Draw block model with weighted edges and nodes sized by
+    # # number of internal nodes
+    # node_size=[BM.node[x]['nnodes']*10 for x in BM.nodes()]
+    # edge_width=[(2*d['weight']) for (u,v,d) in BM.edges(data=True)]
+    # # Set positions to mean of positions of internal nodes from original graph
+    # posBM={}
+    # for n in BM:
+    # xy=numpy.array([pos[u] for u in BM.node[n]['graph']])
+    # posBM[n]=xy.mean(axis=0)
+    # ax=fig.add_subplot(212)
+    # nx.draw(BM,posBM,node_size=node_size,width=edge_width,with_labels=False)
+    # plt.xlim(0,1)
+    # plt.ylim(0,1)
+    # plt.axis('off')
 
 def plot_hist_size_partition(partition):
     unique_size = len(unique(list(partition.values())))
@@ -173,15 +126,11 @@ def plot_hist_size_partition(partition):
     plt.title('Distribution of Partition Size in Nodes')
 
 if __name__ == '__main__':
-    # F, all_nodes = load_clean_data() # Import and clean
-    # ego = build_subgraph(F, all_nodes ) # Create subgroup
-    # GeneralGraph(ego, filename = "ego_3") #Generages image in Gephi
+
     G, all_nodes = lg.load_clean_data() # Import and clean
     ego = lg.build_subgraph(G, all_nodes ) # Create subgroup
     lg.GeneralGraph(ego, filename = "replace_nan_unknown_no_regex") #Generages image in Gephi
     # f = filter_nodess_by_degree(ego, all_nodes, k=3)
-    # lg.GeneralGraph(ego, filename = "ego_filter_k_3")
-    # # DiGraphMatcher.subgraph_is_isomorphic(f,ego)
     Q = msr.my_louvian_modularity(ego)
 
     '''
@@ -193,6 +142,7 @@ if __name__ == '__main__':
     H = nx.convert_node_labels_to_integers(H)
     # Create parititions with hierarchical clustering
     partitions = create_hc(H)
+
     # Build blockmodel graph
     BM = nx.quotient_graph(H, partitions, relabel=True)
 
@@ -218,9 +168,9 @@ if __name__ == '__main__':
     Playing with block model
     '''
 
-    cluster=create_hc(ego)
-    M = nx.blockmodel(ego, clusters)
-    net.draw(M)
+    cluster = create_hc(ego)
+    BM = nx.quotient_graph(ego, clusters, create_using=nx.MultiGraph(), relabel = True)
+    lg.GeneralGraph(BM, 'hc_cluster_ego')
     # df_centralities = msr.comparing_centralities(ego)
     # md_centralities = pandas_df_to_markdown_table(df_centralities)
     #

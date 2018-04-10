@@ -58,7 +58,7 @@ def load_clean_data():
     #     F.remove_node("")
     return F, all_nodes
 
-def build_subgraph(F, all_nodes, my_cutoff = 2):
+def build_subgraph(F, all_nodes, CCODES = None, my_cutoff = 2):
     '''
     GOAL: This function build the subgraph of the notes_of_interest, creates the graph,
     and then saves the figure.
@@ -66,19 +66,21 @@ def build_subgraph(F, all_nodes, my_cutoff = 2):
     INPUT:
         - 'F' is the NetworkX graph from Pandas DataFrame.
         - 'all_nodes', is the concatenation of all node lists into one dataframe.
+        - CCODES, is a tuple of country code of interest. Default is Saudi Arabia (SAU) and Jordan (JOR)
         - 'my_cutoff' (integer, optional) – Depth to stop the search. Only paths
             of length <= cutoff are returned. Default is set to two.
     OUPUT:
         - 'ego' is a subgraph of the countries of interest.
     '''
-
-    # We only want to look at Saudi Arabia and, maybe, Jordan
-    CCODES = "SAU", "JOR"
+    if CCODES is None:
+        # We only want to look at Saudi Arabia and, maybe, Jordan
+        CCODES = "SAU", "JOR"
+    # Create seed list of country code to interrogate
     seeds = all_nodes[all_nodes["country_codes"].isin(CCODES)].index
 
-    # # Next Computes the shortest path from the node seed to all reachable nodes that
-    # # are cutoff hops away and closer.  The function returns a dictionary with the target nodes as keys,
-    # # so the keys are the cutoff-neighborhood of the seed.
+    # Next Computes the shortest path from the node seed to all reachable nodes that
+    # are cutoff hops away and closer.  The function returns a dictionary with the target nodes as keys,
+    # so the keys are the cutoff-neighborhood of the seed.
     nodes_of_interest = set.union(*[set(nx.single_source_shortest_path_length(F, seed, cutoff = my_cutoff).keys())
                                    for seed in seeds])
     # nodes_of_interest = [elem.nodes() for elem in nx.connected_component_subgraphs(F)
@@ -87,7 +89,7 @@ def build_subgraph(F, all_nodes, my_cutoff = 2):
     # Extract the subgraph that contains all the keys for all the dictionaries
     # with all the connecting eges ... and relabel it
     ego = nx.subgraph(F, nodes_of_interest)
-    ego = reattach_attributes_of_interest(ego)
+    ego = reattach_attributes_of_interest(ego, all_nodes)
 
     '''
     nodes = all_nodes.reindex(ego)
@@ -106,9 +108,11 @@ def build_subgraph(F, all_nodes, my_cutoff = 2):
     # ego_edges = filter(lambda x: g.degree()[x[0]] > 0 and g.degree()[x[1]] > 0, g.edges())
     # ego.add_edges_from(ego_edges)
     return ego
-def reattach_attributes_of_interest(ego):
+
+def reattach_attributes_of_interest(ego, all_nodes):
     '''
     Re-attaches attributes for country_code, type, and name to the networkx graph
+    ----------------------------------------------
     INPUT: ego, is the instantiated NetworkX graph
     OUTPUT: returns ego_attached with the attributes reattached and the nodes relabled
     '''
@@ -152,21 +156,22 @@ def split_graph(ego, ego_nodes, part_type):
     # for com in set(partition.values()):
         list_nodes = [nodes for nodes in partition.keys() if partition[nodes] == com]
         ego[com] = nx.subgraph(ego, list_nodes)
-        # with all the connecting eges ... and relabel it
-        ego = nx.subgraph(ego, list_nodes)
-        nodes = ego_nodes.reindex(ego)
-        nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
-
-        #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
-        nx.set_node_attributes(ego, nodes["country_codes"], "cc")
-        nx.set_node_attributes(ego, nodes["type"], "ty")
-        nx.set_node_attributes(ego, nodes["name"], "nm")
-        # get rid of null and turn the list into a dictionary
-        valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-        nx.relabel_nodes(ego, valid_names)
-        # ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
-        # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
-        #                                 & nodes.name.isnull()].address)
+        ego = reattach_attributes_of_interest(ego, all_nodes)
+        # # with all the connecting eges ... and relabel it
+        # ego = nx.subgraph(ego, list_nodes)
+        # nodes = ego_nodes.reindex(ego)
+        # nodes = nodes[~nodes.index.duplicated()] # There are duplicate country codes on some nodes
+        #
+        # #  Sets node attributes for nodes["country_codes"] from a given value or dictionary of values
+        # nx.set_node_attributes(ego, nodes["country_codes"], "cc")
+        # nx.set_node_attributes(ego, nodes["type"], "ty")
+        # nx.set_node_attributes(ego, nodes["name"], "nm")
+        # # get rid of null and turn the list into a dictionary
+        # valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
+        # nx.relabel_nodes(ego, valid_names)
+        # # ego = nx.relabel_nodes(ego, nodes[nodes.name.notnull()].name)
+        # # ego = nx.relabel_nodes(ego, nodes[nodes.address.notnull()
+        # #                                 & nodes.name.isnull()].address)
 
     # ego = build_community_subgroup(G, nodes)
     # GeneralGraph(ego, 'partition-modularity')
@@ -176,16 +181,28 @@ def split_graph(ego, ego_nodes, part_type):
     # plt.show()
 
 def my_community_dendogram(G):
+    '''
+    GOAL:
+    --------------------------------------------
+    INPUT: G, instaciated networkx graph
+    OUPT:
+    - 'dendo', a list of partitions, ie dictionnaries where keys of the i+1 are
+      the values of the i. and where keys of the first are the nodes of graph
+    - 'part_dendo', A dictionary where keys are the nodes and the values are the set it belongs to
+    - 'part_louvian', The partition, with communities numbered from 0 to number of communities
+    - 'induced_G', a networkx graph where nodes are the parts
+    '''
     #Find communities in the graph
     dendo = nx.generate_dendogram(G)
 
     # partition of the nodes at the given level
     cm.partition_at_level(dendo, len(dendo) - 1 )
-     for level in range(len(dendo) - 1) :
+    for level in range(len(dendo) - 1) :
          print("partition at level", level, "is", cm.partition_at_level(dendo, level))
 
-    part = cm.best_partition(G)
+    part = cm.best_partition(G) # uses Louvain algorithm
+    list_part_values = [part.get(node) for node in G.nodes()] # turns dictionary values into a list
     induced_G = cm.induced_graph(part, G) #graph where nodes are the communities
-    pass
+    return dendo, part_dendo, part_louvian, induced_G
 
 # if __name__ == '__main__':
