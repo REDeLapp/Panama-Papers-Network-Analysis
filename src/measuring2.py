@@ -4,6 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import community as cm
 from operator import itemgetter
+import collections
 
 def all_my_centralities(G):
     '''
@@ -30,7 +31,7 @@ def comparing_centralities(G):
     This function campares centralities
     -------------------------------------------
     INPUT:
-    - G, the instanciated networkx graph
+    - G, the instantiatednetworkx graph
     OUPUT: Returns a data frame of all pair wise correlation
     between the centralities
     '''
@@ -56,15 +57,19 @@ def comparing_centralities(G):
     c_series = c_df.stack().sort_values()
     c_series.tail()
     # return centralities, c_series.tail()
-def top_ten_nodes_with_highest_degree(G):
+def top_nodes_with_highest_degree(G, k):
     '''
     GOAL: Find the top ten nodes with the highest degrees
     ----------------------------------------------
-    INPUT: G, networkx graph
-    OUPUT: a sorted list
+    INPUT:
+    G, networkx graph
+    k, the number to top nodes you want to see
+
+    OUPUT: a sorted list of tuple of the names of the nodes with the repective degrees
     '''
+    deg = dict(nx.degree(G))
     top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
-               key=lambda x: x[2], reverse=True)[:10]
+               key=lambda x: x[2], reverse=True)[:k]
 
     print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
     return top10
@@ -147,8 +152,8 @@ def my_louvian_modularity(G):
     interpretation:
     -----------------
 
-    INPUT: instanciated networkx graph, G
-    OUTPUT: the louvian modularity
+    INPUT: instantiated networkx graph, G
+    OUTPUT: the louvian modularity, a float
     '''
     partition = cm.best_partition(G)
     return cm.modularity(partition, G)
@@ -160,9 +165,8 @@ def modularity_based_communities(G):
     ----------------------------------------------
     INPUT: Networkx graph network
     OUPUT:
-    - partition_as_series, the communities,
-    - community_sizes, is a pandas.core.series.Series of the Names and number of
-    - which nodes belong to which community
+    - partition_as_series, the communities and which nodes belong to which community
+    - community_sizes, is a pandas.core.series.Series of the Names and number of communities
     '''
     ## Partitions
     # 1)dictionary with node labels as keys and integer communite identifiers as value
@@ -172,14 +176,14 @@ def modularity_based_communities(G):
     partition_as_series = pd.Series(partition) # unsorted
     partition_as_series_sorted = partition_as_series.sort_values(ascending=False) #
     community_size = part_as_series.value_counts() #size of communite
-    return part_as_series, community_size
+    return part_as_series_sorted, community_size
 
 def plot_hist_len_connected_components(G):
     x = [len(c) for c in net.connected_component_subgraphs(G)]
     plot.hist()
-    
+
 ## Tools
-def filter_nodes_by_degree(G, all_nodes, k):
+def filter_nodes_by_degree(G, all_nodes, k=2):
     '''
     GOAL: this function removes all nodes of a graph G of
     degrees less than or equal to k
@@ -187,25 +191,27 @@ def filter_nodes_by_degree(G, all_nodes, k):
     INPUT:
     - G, instantiated networkx graphs
     - 'all_nodes', is the concatenation of all node lists into one dataframe
-    - k, the number of degree on which you want to filter
+    - k, the number of degree on which you want to filter. It is default to two for this model.
     OUPUT: returns a networkx graph
     '''
     # filter nodes with degree less than k
     nodes = all_nodes.reindex(G)
     nodes = nodes[~nodes.index.duplicated()]
     f = nx.Graph()
-    fedges = filter(lambda x: G.degree()[x[0]] > k and G.degree()[x[1]] > k, G.edges())
+    deg = dict(nx.degree(G))
+    fedges = filter(lambda x: deg[x[0]] > k and deg[x[1]] > k, G.edges())
     f.add_edges_from(fedges)
 
-    # reattach attribute
-    nx.set_node_attributes(f, nodes["country_codes"], "cc")
-    nx.set_node_attributes(f, nodes["type"], "ty")
-    nx.set_node_attributes(f, nodes["name"], "nm")
-    # get rid of null and turn the list into a dictionary
-    valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
-    f = nx.relabel_nodes(f, nodes[nodes.name.notnull()].name)
-                         & nodes.name.isnull()].address)
-    nx.relabel_nodes(f, valid_names)
+    # # reattach attribute
+    # nx.set_node_attributes(f, nodes["country_codes"], "cc")
+    # nx.set_node_attributes(f, nodes["type"], "ty")
+    # nx.set_node_attributes(f, nodes["name"], "nm")
+    # # get rid of null and turn the list into a dictionary
+    # valid_names = nodes[nodes["name"].notnull()]["name"].to_dict()
+    # # f = nx.relabel_nodes(f, nodes[nodes.name.notnull()].name
+    # #                      & nodes.name.isnull()].address)
+    # nx.relabel_nodes(f, valid_names)
+    f = reattach_attributes_of_interest(f, all_nodes)
     return f
 
 def edge_analysis(G, attr = 'intermediary'):
@@ -233,17 +239,18 @@ def edge_analysis(G, attr = 'intermediary'):
 
     return degrees_connectivity_dict, mean_degrees
 
-def node_attr(G, attr = 'intermediary'):
+def node_attr(G, attr = 'ty', name = 'intermediary'):
     '''
     GOAL: return only the node of a certain attribute, attr
     ----------------------------------------------
     INPUT:
-    -G, instanciated Newtorkx graph
-    - attr, is the attritbute on which you want to select nodes
+    -G, instantiatedNewtorkx graph
+    - attr, is the attritbute on which you want to select nodes: ty, cc, nm
+    - name, is the name of the attribute: for type(ty) you want all 'intermediary'
     OUPUT:
     returns all nodes that have a specific attribute
     '''
-    return [x for x,y in G.nodes(data=True) if y['ty'] == attr]
+    return [x for x,y in G.nodes(data=True) if y[attr] == name]
 
 def pandas_df_to_markdown_table(df):
     '''
@@ -265,7 +272,7 @@ def plot_hist_avg_degrees(G, attr):
     Can either be passed 'G' and 'attr' or just the 'mean_degrees'.
     ----------------------------------------------
     INPUT:
-    - G, a instanciated networkx graph
+    - G, a instantiatednetworkx graph
     - attr, the attribute of interest
     - mean_degrees, the average number of degrees the nodes
         of a certain attribute has.
@@ -288,12 +295,14 @@ def plot_degree_vs_frequency(G):
     INPUT:
     OUPUT:
     '''
-    deg = nx.degree(G)
+    deg = dict(nx.degree(G))
     x,y = zip(*Counter(deg.values()).items())
-    ptl.scatter(x,y)
+    ax = plt.gca()
+    plt.scatter(x,y)
     plt.xlabel('Degree')
     plt.ylabel('Frequency')
     plt.title('Barabasi-Albert Network Check')
+    ax.set_xscale('log')
 
 def plot_degree_vs_clustering(G,ego):
     """

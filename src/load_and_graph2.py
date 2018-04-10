@@ -24,7 +24,7 @@ def load_clean_data():
     # /Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv
     # /Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_edges.csv
     edges = edges[edges["TYPE"] != "registrated address"]
-    F = nx.from_pandas_dataframe(edges, "START_ID", "END_ID") # Return a graph from Pandas DataFrame.
+    F = nx.from_pandas_edgelist(edges, "START_ID", "END_ID") # Return a graph from Pandas DataFrame.
 
     # Read node lists
     officers       = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/Panama-Papers-Network-Analysis/data/csv_panama_papers_2018-02-14/panama_papers_nodes_officer.csv', index_col = "node_id")
@@ -182,7 +182,7 @@ def split_graph(ego, ego_nodes, part_type):
 
 def my_community_dendogram(G):
     '''
-    GOAL:
+    GOAL: the function returns information about nodes and there
     --------------------------------------------
     INPUT: G, instaciated networkx graph
     OUPT:
@@ -192,17 +192,17 @@ def my_community_dendogram(G):
     - 'part_louvian', The partition, with communities numbered from 0 to number of communities
     - 'induced_G', a networkx graph where nodes are the parts
     '''
+    part = cm.best_partition(G) # uses Louvain algorithm
     #Find communities in the graph
-    dendo = nx.generate_dendogram(G)
+    dendo = cm.generate_dendrogram(G, part)
 
     # partition of the nodes at the given level
     cm.partition_at_level(dendo, len(dendo) - 1 )
     for level in range(len(dendo) - 1) :
          print("partition at level", level, "is", cm.partition_at_level(dendo, level))
 
-    part = cm.best_partition(G) # uses Louvain algorithm
     list_part_values = [part.get(node) for node in G.nodes()] # turns dictionary values into a list
-    induced_G = cm.induced_graph(part, G) #graph where nodes are the communities
+    induced_G = cm.induced_graph(part, G) #graph where nodes are in the communities
     return dendo, part_dendo, part_louvian, induced_G
 
 # if __name__ == '__main__':
