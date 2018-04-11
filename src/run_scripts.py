@@ -28,7 +28,6 @@ def k_mean_cluster(G, filename = 'k_means'):
     lg.GeneralGraph(f, filename)
     return means, lables
 
-
 def create_hc(ego, t = 1.15):
     """Creates hierarchical cluster of graph G from distance matrix
     ----------------------------------------------
@@ -102,6 +101,8 @@ def create_hc2(G,t=1.15):
 def hiclus_blockmodel(G):
     """Draw a blockmodel diagram of a clustering"""
     # Extract largest connected component into graph H
+    H = next(nx.connected_component_subgraphs(G))
+    # Extract largest connected component into graph H
     H = nx.connected_component_subgraphs(G)#[0]
     # Create parititions with hierarchical clustering
     cluster = create_hc(H)
@@ -139,22 +140,27 @@ def plot_hist_size_partition(partition):
     plt.title('Distribution of Partition Size in Nodes')
 
 if __name__ == '__main__':
+    import load_and_graph2 as lg
+    import measuring2 as msr
 
     G, all_nodes = lg.load_clean_data() # Import and clean
-    ego = lg.build_subgraph(G, all_nodes ) # Create subgroup
+    ego = lg.build_subgraph(G, all_nodes) # Create subgroup
     # lg.GeneralGraph(ego, filename = "replace_nan_unknown_no_regex") #Generages image in Gephi
     # f = filter_nodess_by_degree(ego, all_nodes, k=3)
     # Q = msr.my_louvian_modularity(ego)
     print(" Finished loading network graphs G and ego! ")
+
+
+
     '''
     What does create_HC look like?
     '''
-    # Extract largest connected component into graph H
-    H = next(nx.connected_component_subgraphs(ego))
-    # labele all integer nodes
-    H = nx.convert_node_labels_to_integers(H)
-    # Create parititions with hierarchical clustering
-    cluster1 = create_hc(H)
+    # # Extract largest connected component into graph H
+    # H = next(nx.connected_component_subgraphs(ego))
+    # # labele all integer nodes
+    # H = nx.convert_node_labels_to_integers(H)
+    # # Create parititions with hierarchical clustering
+    # cluster1 = create_hc(H)
 
     # # Build blockmodel graph
     # BM = nx.quotient_graph(H, partitions, relabel=True)

@@ -4,7 +4,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import community as cm
 from operator import itemgetter
-import collections
+from collections import Counter, defaultdict
+import load_and_graph2 as lg
 
 def all_my_centralities(G):
     '''
@@ -131,7 +132,6 @@ def plot_avg_nieghbor_degree_node_degree(G):
     plt.title('A scatter plot of the node degree versus Avg Nieghbor degree')
     plt.show()
 
-
 def my_attribute_assortativity_coefficient(G, feature):
     '''
     GOAL:
@@ -175,8 +175,8 @@ def modularity_based_communities(G):
     # Convert network partition into a pandas series
     partition_as_series = pd.Series(partition) # unsorted
     partition_as_series_sorted = partition_as_series.sort_values(ascending=False) #
-    community_size = part_as_series.value_counts() #size of communite
-    return part_as_series_sorted, community_size
+    community_size = partition_as_series.value_counts() #size of communite
+    return partition_as_series_sorted, community_size
 
 def plot_hist_len_connected_components(G):
     x = [len(c) for c in net.connected_component_subgraphs(G)]
@@ -327,3 +327,37 @@ def plot_hist_size_partition(partition):
     plt.xlabel('The Number of Node In Partition')
     plt.ylabel('Frequency of Partition Size')
     plt.title('Distribution of Partition Size in Nodes')
+
+def Community_break_down(ego):
+
+    ## get list of nodes for each louvian_partition
+    community_list = defaultdict(list)
+    for k,v in dendo[0].items():
+        community_list[v].append(k)
+
+    ## generate separate subgraph for each community
+    ego_list = []
+    for n in community_list.keys(): # goes through index of communities based on modularity
+        nx.subgraph(ego, community_list[n])
+        # ego = reattach_attributes_of_interest(ego, all_nodes)
+        ego_list.append(nx.subgraph(ego, community_list[n]))
+    # ego_list = [nx.subgraph(ego, community_list[n]), for n in community_list.keys()]
+
+    # get modularity values per subgraph
+    ego_modularity = []
+    for i in range(len(community_list)):
+        Q = cm.modularity(community_list[i], ego_list[i])
+        ego_modularity.append(Q)
+
+    # return top ranking modularity communites
+
+    # break down each community
+    '''
+    1. Country_community
+
+    2. avg_degree of community
+
+    3. community centrality
+
+    4. nodes with top degrees
+    '''

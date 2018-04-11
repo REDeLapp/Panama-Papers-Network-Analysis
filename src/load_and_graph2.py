@@ -49,13 +49,6 @@ def load_clean_data():
         value = ["","", "", "LTD", np.nan, np.nan, np.nan, np.nan, np.nan],
         inplace = True, regex = True)
 
-    # all_nodes['type'].dropna
-
-    # if "ISSUES OF:" in F:
-    #     F.remove_node("ISSUES OF:")
-    #
-    # if "" in F:
-    #     F.remove_node("")
     return F, all_nodes
 
 def build_subgraph(F, all_nodes, CCODES = None, my_cutoff = 2):
@@ -192,16 +185,16 @@ def my_community_dendogram(G):
     - 'part_louvian', The partition, with communities numbered from 0 to number of communities
     - 'induced_G', a networkx graph where nodes are the parts
     '''
-    part = cm.best_partition(G) # uses Louvain algorithm
+    part_louvian = cm.best_partition(G) # uses Louvain algorithm
     #Find communities in the graph
-    dendo = cm.generate_dendrogram(G, part)
+    dendo = cm.generate_dendrogram(G, part_louvian)
 
     # partition of the nodes at the given level
     cm.partition_at_level(dendo, len(dendo) - 1 )
     for level in range(len(dendo) - 1) :
          print("partition at level", level, "is", cm.partition_at_level(dendo, level))
 
-    list_part_values = [part.get(node) for node in G.nodes()] # turns dictionary values into a list
+    list_part_values = [part_louvian.get(node) for node in G.nodes()] # turns dictionary values into a list
     induced_G = cm.induced_graph(part, G) #graph where nodes are in the communities
     return dendo, part_dendo, part_louvian, induced_G
 

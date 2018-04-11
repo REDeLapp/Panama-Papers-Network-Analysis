@@ -7,11 +7,14 @@ class Influencer(Persons):
     def step(self):
         pass
 
+
+community_list = []
+    for k,v dendo[0]
 if __name__ == '__main__':
 
     Influencer = 2
     connections = 4
-    ## Add the influencer to the network and connect each to the 3 other nodes
+    ## Add the influencer to the network and connect each to the other nodes
     for i in range(influencers):
         inf = Influencer ("Inf" = str(i))
         for x in range(connections):
