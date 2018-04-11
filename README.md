@@ -32,15 +32,19 @@ Link: https://www.occrp.org/en/panamapapers/database
 
 The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships  between  companies  and  individual  people  with  offshore  companies based in tax havens. Consists in a directed and unweighted network based on commercial  registration  of  all  types  of  companies  involved  in  the  scandal  and the existing relations type, which are:
 
-* "director of” - referring to the person appointed to the company’s management;
+| Edge Relation | Meaning       |
+| ------------- |:-------------:|
+|"director of”|referring to the person appointed to the company’s management|
 
-* ”address” - through which was possible to establish the country origin of the company;
+* "director of” - referring to the person appointed to the company’s management
 
-* ”shareholder of” - if it holds a stake in an offshore company;
+* ”address” - through which was possible to establish the country origin of the company
 
-* ”intermediary of” - if it mediates companies in access to offshores;
+* ”shareholder of” - if it holds a stake in an offshore company
 
-* ”similar of” - if the company is related to another company, among other attributes.
+* ”intermediary of” - if it mediates companies in access to offshores
+
+* ”similar of” - if the company is related to another company, among other attributes
 
 How The Data Is Structured:
 Below is a break down between the different roles of Entity, Officer, and Intermediary.
@@ -56,12 +60,11 @@ Below is a break down between the different roles of Entity, Officer, and Interm
 
 * **Intermediary**
 <br /> A go-between for someone seeking an offshore corporation
-  and an offshore service provider - usually a law-firm or a middleman that
-  asks an offshore service provider to create an offshore firm for a client.
+  and an offshore service provider - usually a law-firm or a middleman that asks an offshore service provider to create an offshore firm for a client.
 
 * **Address**
 <br /> A contact postal address as it appears in the original databases
-  obtained by ICIJ
+  obtained by ICIJ.
 
 In table 1, breaks down the file structure of how the entire corpus of documents provided by the ICIJ.
 
@@ -80,31 +83,41 @@ This project relied heavily on the NetworkX python library and Gephi for data vi
 ## Network Analysis Methods
 
 * **Clustering Coefficient**
-<br />  the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs.
+<br />  The fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs.
+
+[insert example code]
+[insert example results]
+[interpretation]
 
 * **Betweenness Centrality**
-<br />  high  betweenness  individuals  are  often  critical  to  collaboration across different groups.
+<br />  High  betweenness  individuals  are  often  critical  to  collaboration across different groups.
+
+[insert example code]
+[insert example results]
+[interpretation]
 
 * **Eigenvector centrality**
-<br />  identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
+<br />  Identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
 
+[insert example code]
+[insert example results]
+[interpretation]
 
 * **Modularity**
-<br />  measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks. In this model, Louvian Modularity was used to partition the graph(ego) into communities that maximized modularity.
+<br />  This metric identifies nodes that are more densely connected together than to the rest of the network, describing the network structure. In this model, Louvian Modularity was used to partition the graph(ego) into communities that maximized modularity. However, it does poorly to identify small communities.
 
 * **Degrees**
 <br /> Top ten nodes with the highest number of degrees.
 
 ## Model
 
-
+Figure 2: Subgraph of the Panama Papers broken down into community using Louvian Modularity.
 ![image](images/ego_SUA_JOR_d2_Q.png)
 ![image](images/legend_ego_SUA_JOR_d2_Q.png)
 
+Figure 3: A community within the model with high modularity rank.
 ![image](images/community_triad.png)
 ![image](images/legend_community_triad.png)
-
-
 
 As seen in table 2, intermediary type nodes have the larger average number of degrees within the subgraph.
 
