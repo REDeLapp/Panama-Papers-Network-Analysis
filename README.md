@@ -103,7 +103,7 @@ As seen in table X, intermediary type nodes have the larger average number of de
 
 In table X, we have the Names of the top 10 nodes with the larges number of degrees.
 | Name          | Type          | Number Number of Degrees |
-| ------------- |:-------------:| -------:|
+| ------------- |-------------:| -------:|
 |RAWI_&_CO |(intermediary) |1475|
 |BROCK_NOMINEES_LTD |(officer) |243|
 |CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
