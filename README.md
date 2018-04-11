@@ -76,22 +76,27 @@ This project relied heavily on the NetworkX python library and Gephi for data vi
 
 ## Network Analysis Methods
 
-* Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs.
+* **Clustering Coefficient**
+<br />  the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs.
 
-* Bridges: high  betweenness  individuals  are  often  critical  to  collaboration across different groups.
+* **Betweenness Centrality**
+<br />  high  betweenness  individuals  are  often  critical  to  collaboration across different groups.
 
-* Eigenvector centrality: identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
+* **Eigenvector centrality**
+<br />  identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
 
-* PageRank: the rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
-* Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks
+* **Modularity**
+<br />  measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks. In this model, Louvian Modularity was used to partition the graph(ego) into communities that maximized modularity.
 
-* Top ten nodes with the highest number of degrees.
+* **Degrees**
+<br /> Top ten nodes with the highest number of degrees.
 
 ## Model
 
+
 ![image](images/ego_SUA_JOR_d2_Q.png)
-![image](images/legend_SUA_JOR_d2_Q.png)
+![image](images/legend_ego_SUA_JOR_d2_Q.png)
 
 ![image](images/community_triad.png)
 ![image](images/legend_community_triad.png)
@@ -121,9 +126,7 @@ In table 3, we have the Names of the top 10 nodes with the larges number of degr
 |CACIQUE_INVESTMENTS_LTD |(officer) |83|
 |OLYMPIC_GOLD_HOLDINGS_LTD |(officer) |67|
 
-## Repo Structure
-
 ## References
 1. https://offshoreleaks.icij.org/pages/database
 2. http://wps.fep.up.pt/wps/wp592.pdf
-2. Complex Network Analysis in Python, Dmitry Zinoview, The Pragmatic Programmers. (2018)
+2. Complex Network Analysis in Python, Dmitry Zinoviev, The Pragmatic Programmers. (2018)
