@@ -94,23 +94,24 @@ How The Data Is Structured:
 ![](images/legend_types.png)
 
 As seen in table X, intermediary type nodes have the larger average number of degrees within the subgraph.
-| Type          | Average # Degrees|
+
+| Type          | Average Number of Degrees|
 | ------------- |:-------------:|
 | intermediary | 12.9781|
 | Entity | 2.4506|
 | Officer | 2.7303|
 
 In table X, we have the Names of the top 10 nodes with the larges number of degrees.
-| Name          | Type          | Number of Degrees |
+| Name          | Type          | Number Number of Degrees |
 | ------------- |:-------------:| -------:|
-|RAWI_&_CO |(intermediary): |1475|
-BROCK_NOMINEES_LTD (officer) |243|
-CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
+|RAWI_&_CO |(intermediary) |1475|
+|BROCK_NOMINEES_LTD |(officer) |243|
+|CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
 |TENBY_NOMINEES_LTD |(officer) |219|
 |HELM_TRUST_COMPANY_LTD |(officer) |182|
 |ARAB_PALESTINIAN_INVESTMENT_(HOLDING)_COMPANY_LTD |(entity) |98|
-DAMOR_INVESTMENTS_LTD |(officer) |92|
-CACIQUE_INVESTMENTS_LTD |(officer) |83|
+|DAMOR_INVESTMENTS_LTD |(officer) |92|
+|CACIQUE_INVESTMENTS_LTD |(officer) |83|
 |OLYMPIC_GOLD_HOLDINGS_LTD |(officer) |67|
 
 ## Repo Structure
