@@ -332,27 +332,30 @@ def percent_cc_df(G, attr = 'cc'):
     result = result.sort_values(by=['Community Percentage'], ascending = False)
     return result
 
-def Community_break_down(partition):
-
+def Community_break_down(partition, ego):
+    # partition = dendo[0]
     ## get list of nodes for each louvian_partition
-    community_list = defaultdict(list)
-    for k,v in partition.items():
-        community_list[v].append(k)
+    community_nodes = defaultdict(list)
+    for k,v in dendo[0].items():
+        community_nodes[v].append(k)
 
     ## generate separate subgraph for each community
     ego_list = []
-    for n in community_list.keys(): # goes through index of communities based on modularity
-        nx.subgraph(ego, community_list[n])
+    for n in community_nodes.keys(): #range(len(community_nodes)): ## goes through index of communities based on modularity
+        nx.subgraph(ego, community_nodes[n])
         # ego = reattach_attributes_of_interest(ego, all_nodes)
-        ego_list.append(nx.subgraph(ego, community_list[n]))
+        ego_list.append(nx.subgraph(ego, community_nodes[n]))
+        # ego_list = []
+    # for n in community_list.keys(): # goes through index of communities based on modularity
+    #     ego_list.append(nx.subgraph(ego, community_list[n]))
     # ego_list = [nx.subgraph(ego, community_list[n]), for n in community_list.keys()]
 
     # get modularity values per subgraph
     # empty pd dataframe
     ego_modularity_df = pd.DataFrame(columns=['com_idx', 'Q', 'n_nodes'])
-    for i in range(len(community_list)): #community_list.keys():
+    for i in range(len(community_nodes)): #community_list.keys():
         Q = my_louvian_modularity(ego_list[i])
-        ego_modularity_df.loc[i] = [[i], Q, len(community_list[i])]
+        ego_modularity_df.loc[i] = [[i], Q, len(community_nodes[i])]
     # Sort the df by modularity, Q
     ego_modularity_df = ego_modularity_df.sort_values(by=['Q'], ascending = False)
 
@@ -361,12 +364,11 @@ def Community_break_down(partition):
 
     # break down each community
     #returns degrees for each node within ego_list[i]
+    community_degrees_per_node = []
     for i in community_list.keys():
-        [{k,v}  for k,v in ego_list[i].degree(community_list[i])]
+        community_degrees_per_node.append([{k,v}  for k,v in ego_list[i].degree(community_nodes[i])])
 
-    foo = nx.get_node_attributes(ego_list[8], 'cc')
-    Counter(foo.values())
-
+    return community_nodes, top_communities, ego_modularity_df, community_degrees_per_node
 
 
 
