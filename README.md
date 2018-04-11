@@ -3,29 +3,28 @@
 ## The Project
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
-Journalism...
+The exploitation of openly and legally available information is as ancient as the use of intelligence as a tool for collecting information with regard to national defense and security. Open Source Intelligence (OSINT) reporters believe that it will enhance the intelligence cycle through its vast volume and capabilities.
+
 Jordan and financial reform...
 
 Understanding the social relationships identified within the Panama Papers may lead to a clearer understanding of how these methods of offshore structures are used to transfer money between Jordan and Saudi Arabia
 
-Jordan-Saudi Arabia connection...
-
-We then computed several centrality measure and report our observations in order to identify the key players.
 
 ## The Process
 1) Load data. The code can be found in in the [load_and_clean2.py]()
 
-2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia (SAU) and The Hishamite Kingdom of Jordan (JOR).
+2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia (SAU) and The Hashemite Kingdom of Jordan (JOR).
 The code can be found in in the [load_and_clean2.py]().
 
-3) Generate initial graph, ego, in Gephi using ForceAtlas2
+3) Generate initial graph, ego, in Gephi using built in ForceAtlas2 algorithm
 The code can be found in in the [load_and_clean2.py]().
 
-4) Analyze community structures based on Louvian modularity, Q and centralities.
+4) Computed several centrality measure and report our observations in order to identify the key players.
+
+5) Analyze community structures based on Louvian modularity, Q, and centralities.
 The code can be found in in the [measuring2.py]().
 
-5) [Find person(s) of interest and tell a story]
-The code can be found in in the [measuring2.py]().
+6) Investigated the top ten nodes with the highest degrees and characterized their role in their respective communities. The code can be found in in the [measuring2.py]().
 
 ## The Data
 The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
@@ -73,16 +72,17 @@ How The Data Is Structured:
 
 ## Network Analysis Methods
 
-* Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs
+* Clustering Coefficient: the fraction of possible triangles in an egocentric network that contain the ego node and exit. It measures the undefined for directed graphs.
 
 * Bridges: high  betweenness  individuals  are  often  critical  to  collaboration across different groups.
-
-* Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks
 
 * Eigenvector centrality: identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
 
 * PageRank: The rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
+* Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks
+
+* Top ten nodes with the highest number of degrees.
 ## Model
 
 [insert tables on centrality within subgraph]
@@ -93,7 +93,7 @@ How The Data Is Structured:
 ![](images/zoom.png)
 ![](images/legend_types.png)
 
-As seen in table X, intermediary type nodes have the larger average number of degrees within the subgraph.
+As seen in table 2, intermediary type nodes have the larger average number of degrees within the subgraph.
 
 | Type          | Average Number of Degrees|
 | ------------- |-------------:|
@@ -101,7 +101,7 @@ As seen in table X, intermediary type nodes have the larger average number of de
 | Entity | 2.4506|
 | Officer | 2.7303|
 
-In table X, we have the Names of the top 10 nodes with the larges number of degrees.
+In table 3, we have the Names of the top 10 nodes with the larges number of degrees.
 
 
 | Name          | Type          | Number Number of Degrees |

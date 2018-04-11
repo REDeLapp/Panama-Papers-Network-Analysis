@@ -58,6 +58,7 @@ def comparing_centralities(G):
     c_series = c_df.stack().sort_values()
     c_series.tail()
     # return centralities, c_series.tail()
+    
 def top_nodes_with_highest_degree(G, k):
     '''
     GOAL: Find the top ten nodes with the highest degrees
@@ -278,10 +279,11 @@ def plot_hist_avg_degrees(G, attr):
 
 def plot_degree_vs_frequency(G):
     '''
-    GOAL:
+    GOAL: plot the number of degree versus the frequency that number of degrees occures in G
+    This is what is otherwise known as a Barabasi-Albert Network Check
     ----------------------------------------------
-    INPUT:
-    OUPUT:
+    INPUT: G, instantiated newtorkx graph
+    OUPUT: plot on log scale
     '''
     deg = dict(nx.degree(G))
     x,y = zip(*Counter(deg.values()).items())
@@ -298,7 +300,7 @@ def plot_degree_vs_clustering(G,ego):
     The clustering coeff is a fraction of possible triangles that contain the ego node and the exist
     ----------------------------------------------
     """
-    deg = nx.degree(G)
+    deg = dict(nx.degree(G))
     cc = nx.clustering(nx.Graph(G),ego)
     ptl.scatter(x,y)
     plt.xlabel('Degrees')
@@ -362,7 +364,7 @@ def Community_break_down(partition, ego):
     # return top ranking modularity communites
     top_communities = ego_modularity_df['com_idx'][ego_modularity_df['Q'] > 0.6]
 
-    # break down each community
+
     #returns degrees for each node within ego_list[i]
     community_degrees_per_node = []
     for i in community_list.keys():
