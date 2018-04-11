@@ -96,7 +96,7 @@ How The Data Is Structured:
 As seen in table X, intermediary type nodes have the larger average number of degrees within the subgraph.
 
 | Type          | Average Number of Degrees|
-| ------------- |:-------------:|
+| ------------- |-------------:|
 | intermediary | 12.9781|
 | Entity | 2.4506|
 | Officer | 2.7303|
