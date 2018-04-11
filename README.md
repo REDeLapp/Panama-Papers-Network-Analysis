@@ -90,8 +90,8 @@ This project relied heavily on the NetworkX python library and Gephi for data vi
 
 ## Model
 
-![image](images/ego_SUA_JOR_d2_Q.pgn)
-![image](images/legend_SUA_JOR_d2_Q.pgn)
+![image](images/ego_SUA_JOR_d2_Q.png)
+![image](images/legend_SUA_JOR_d2_Q.png)
 
 ![image](images/community_triad.png)
 ![image](images/legend_community_triad.png)
