@@ -3,29 +3,29 @@
 ## The Project
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
-Journalism
-Jordan and financial reform
+Journalism...
+Jordan and financial reform...
 
 Understanding the social relationships identified within the Panama Papers may lead to a clearer understanding of how these methods of offshore structures are used to transfer money between Jordan and Saudi Arabia
 
-Jordan-Saudi Arabia connection
+Jordan-Saudi Arabia connection...
 
 We then computed several centrality measure and report our observations in order to identify the key players.
 
 ## The Process
-1) Load data
-2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia and The Hishamite Kingdom of Jordan.
+1) Load data. The code can be found in in the [load_and_clean2.py]()
+
+2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia (SAU) and The Hishamite Kingdom of Jordan (JOR).
+The code can be found in in the [load_and_clean2.py]().
+
 3) Generate initial graph, ego, in Gephi using ForceAtlas2
-  i) Build intuition by looking at the structure.
-  ii) Look at centralities  
-4) Analyze community structures based on Louvian modularity, Q.
-    i) edge analysis
-    ii) centralities within Q_i-community
-5) Split subgraph, ego, into the following graphs:
-    i) modularity
-    ii) k-means
-6) Compare inter and cross variance for both modularity and k-means
-7) [Find person(s) of interest and tell a story] 
+The code can be found in in the [load_and_clean2.py]().
+
+4) Analyze community structures based on Louvian modularity, Q and centralities.
+The code can be found in in the [measuring2.py]().
+
+5) [Find person(s) of interest and tell a story]
+The code can be found in in the [measuring2.py]().
 
 ## The Data
 The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
@@ -85,7 +85,7 @@ How The Data Is Structured:
 
 ## Model
 
-[insert tables]
+[insert tables on centrality within subgraph]
 
 ![](images/global.png)
 ![](images/legend_modularity.png)
@@ -93,12 +93,27 @@ How The Data Is Structured:
 ![](images/zoom.png)
 ![](images/legend_types.png)
 
-Look into intermediary
+As seen in table X, intermediary type nodes have the larger average number of degrees within the subgraph.
 | Type          | Average # Degrees|
 | ------------- |:-------------:|
-| intermediary | 13.1705|
-| Entity | |
-| Officer | |
+| intermediary | 12.9781|
+| Entity | 2.4506|
+| Officer | 2.7303|
+
+In table X, we have the Names of the top 10 nodes with the larges number of degrees.
+| Name          | Type          | Number of Degrees |
+| ------------- |:-------------:| -------:|
+|RAWI_&_CO |(intermediary): |1475|
+BROCK_NOMINEES_LTD (officer) |243|
+CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
+|TENBY_NOMINEES_LTD |(officer) |219|
+|HELM_TRUST_COMPANY_LTD |(officer) |182|
+|ARAB_PALESTINIAN_INVESTMENT_(HOLDING)_COMPANY_LTD |(entity) |98|
+DAMOR_INVESTMENTS_LTD |(officer) |92|
+CACIQUE_INVESTMENTS_LTD |(officer) |83|
+|OLYMPIC_GOLD_HOLDINGS_LTD |(officer) |67|
+
+## Repo Structure
 
 ## References
 1. https://offshoreleaks.icij.org/pages/database
