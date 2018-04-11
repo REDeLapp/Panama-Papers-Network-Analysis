@@ -48,16 +48,19 @@ Below is a break down between the different roles of Entity, Officer, and Interm
 ![](images/shapeofthedata.png)
 (source:https://guides.neo4j.com/sandbox/icij-paradise-papers/datashape.html)
 
-* Entity (offshore): company, trust or fund created in a low-tax, offshore
-   jurisdiction by an agent.
+* **Entity** (offshore)
+<br /> Company, trust or fund created in a low-tax, offshore jurisdiction by an agent.
 
-* Officer: person or company who plays a role in an offshore entity.
+* **Officer**
+<br /> Person or company who plays a role in an offshore entity.
 
-* Intermediary: a go-between for someone seeking an offshore corporation
+* **Intermediary**
+<br /> A go-between for someone seeking an offshore corporation
   and an offshore service provider - usually a law-firm or a middleman that
   asks an offshore service provider to create an offshore firm for a client.
 
-* Address: contact postal address as it appears in the original databases
+* **Address**
+<br /> A contact postal address as it appears in the original databases
   obtained by ICIJ
 
 In table 1, breaks down the file structure of how the entire corpus of documents provided by the ICIJ.
