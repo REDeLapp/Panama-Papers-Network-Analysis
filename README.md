@@ -35,16 +35,11 @@ The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships 
 | Edge Relation | Meaning       |
 | ------------- |:-------------:|
 |"director of”|referring to the person appointed to the company’s management|
-
-* "director of” - referring to the person appointed to the company’s management
-
-* ”address” - through which was possible to establish the country origin of the company
-
-* ”shareholder of” - if it holds a stake in an offshore company
-
-* ”intermediary of” - if it mediates companies in access to offshores
-
-* ”similar of” - if the company is related to another company, among other attributes
+|"director of” | referring to the person appointed to the company’s management|
+|”address” | through which was possible to establish the country origin of the company|
+|”shareholder of” | if it holds a stake in an offshore company|
+|”intermediary of” | if it mediates companies in access to offshores|
+| ”similar of” | if the company is related to another company, among other attributes|
 
 How The Data Is Structured:
 Below is a break down between the different roles of Entity, Officer, and Intermediary.
