@@ -3,32 +3,30 @@
 ## The Project
 Social network analysis of the Panama Papers, with a specific emphasis in Saudi Arabia and Jordan. The network looks at the nodes between these two country and any other nodes irregardless of country of origin two degrees of freedom away.
 
-The exploitation of openly and legally available information is as ancient as the use of intelligence as a tool for collecting information with regard to national defense and security. Open Source Intelligence (OSINT) reporters believe that it will enhance the intelligence cycle through its vast volume and capabilities.
-
-Jordan and financial reform...
+The exploitation of openly and legally available information is as ancient as the use of intelligence as a tool for collecting information with regard to national defense and security. Open Source Intelligence (OSINT) reporters believe that it will enhance the depth and breath of their reporting through its vast volume and capabilities.
 
 Understanding the social relationships identified within the Panama Papers may lead to a clearer understanding of how these methods of offshore structures are used to transfer money between Jordan and Saudi Arabia
 
 
 ## The Process
-1) Load data. The code can be found in in the [load_and_clean2.py]()
 
-2) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia (SAU) and The Hashemite Kingdom of Jordan (JOR).
+1) Generate subgraph of model of interest: nodes with two degree or less from all nodes with country codes for Saudi Arabia (SAU) and The Hashemite Kingdom of Jordan (JOR).
 The code can be found in in the [load_and_clean2.py]().
 
-3) Generate initial graph, ego, in Gephi using built in ForceAtlas2 algorithm
+2) Generate initial graph, ego, in Gephi using built in ForceAtlas2 algorithm.
 The code can be found in in the [load_and_clean2.py]().
 
-4) Computed several centrality measure and report our observations in order to identify the key players.
-
-5) Analyze community structures based on Louvian modularity, Q, and centralities.
+3) Computed several centrality measure and report our observations in order to identify the key players.
 The code can be found in in the [measuring2.py]().
 
-6) Investigated the top ten nodes with the highest degrees and characterized their role in their respective communities. The code can be found in in the [measuring2.py]().
+4) Analyze community structures based on Louvian modularity, Q, and centralities.
+The code can be found in in the [measuring2.py]().
+
+5) Investigated the top ten nodes with the highest degrees and characterized their role in their respective communities. The code can be found in in the [measuring2.py]().
 
 ## The Data
-The Panama  Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides
-information on approximately 360,000 businesses and individuals in more than 200 countries linked to offshore structures and covering a time period of nearly 40 years, from 1977 to 2016.
+
+The Panama Papers are a set of 11.5 million document leaks from Panamanian law company ”Mossack Fonseca”, which provides information on approximately 360,000 businesses and individuals in more than 200 countries linked to offshore structures and covering a time period of nearly 40 years, from 1977 to 2016.
 
 Link: https://www.occrp.org/en/panamapapers/database
 
@@ -45,6 +43,8 @@ The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships 
 * ”similar of” - if the company is related to another company, among other attributes.
 
 How The Data Is Structured:
+Below is a break down between the different roles of Entity, Officer, and Intermediary.
+
 ![](images/shapeofthedata.png)
 (source:https://guides.neo4j.com/sandbox/icij-paradise-papers/datashape.html)
 
@@ -60,6 +60,9 @@ How The Data Is Structured:
 * Address: contact postal address as it appears in the original databases
   obtained by ICIJ
 
+In table 1, breaks down the file structure of how the entire corpus of documents provided by the ICIJ.
+
+
 | Name          | Type          | Purpose | # of rows | Columns of interest |
 | ------------- |:-------------:| -------:|----------:|------------:|
 |  panama_papers_edges.csv    |    Edge       |   Each edge has a type of the represented relationship | 1,269,796    |   START_ID, TYPE, END_ID      |
@@ -68,7 +71,8 @@ How The Data Is Structured:
 | panama_papers_intermediary.csv|    Nodes      |  Persons and organizations that act as links between other organizations| 23,642 |  name, country_code  |
 | panama_papers_officer.csv  |    Nodes      | Persons (directors, shareholders, and so on)| 345,645 | name, country_code |
 
-
+## Technologies Used
+This project relied heavily on the NetworkX python library and Gephi for data visualizations.
 
 ## Network Analysis Methods
 
@@ -78,11 +82,12 @@ How The Data Is Structured:
 
 * Eigenvector centrality: identifies nodes that are surrounded by other nodes. Can be used to located groups of interconnected nodes with high prestige.
 
-* PageRank: The rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
+* PageRank: the rank of a node in the network is calculated as the probability that a s person randomly traversing the edges will arrive at the node.
 
 * Modularity: measure aims to identify the nodes that are more densely connected together than to the rest of the network, describing the network structure, i.e., how the network is compartmentalized into sub-networks
 
 * Top ten nodes with the highest number of degrees.
+
 ## Model
 
 [insert tables on centrality within subgraph]
