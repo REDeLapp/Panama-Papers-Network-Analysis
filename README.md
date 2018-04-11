@@ -90,13 +90,13 @@ This project relied heavily on the NetworkX python library and Gephi for data vi
 
 ## Model
 
-[insert tables on centrality within subgraph]
+![image](images/ego_SUA_JOR_d2_Q.pgn)
+![image](images/legend_SUA_JOR_d2_Q.pgn)
 
-![](images/global.png)
-![](images/legend_modularity.png)
+![image](images/community_triad.png)
+![image](images/legend_community_triad.png)
 
-![](images/zoom.png)
-![](images/legend_types.png)
+
 
 As seen in table 2, intermediary type nodes have the larger average number of degrees within the subgraph.
 
