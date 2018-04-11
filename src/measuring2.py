@@ -69,7 +69,7 @@ def top_nodes_with_highest_degree(G, k):
     OUPUT: a sorted list of tuple of the names of the nodes with the repective degrees
     '''
     deg = dict(nx.degree(G))
-    top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
+    top10 = sorted([(n, G.node[n]["ty"], v) for n, v in deg.items()],
                key=lambda x: x[2], reverse=True)[:k]
 
     print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
@@ -84,13 +84,7 @@ def max_sort_centrality(mydict, num):
     - num, the limit of the top maximum centralities
     OUPUT: returns the node_id index on the names of the
     '''
-
-    # top10 = sorted([(n, G.node[n]["type"], v) for n, v in deg.items()],
-    #            key=lambda x: x[2], reverse=True)[:10]
-    #
-    # print("\n".join(["{} ({}): {}".format(*t) for t in top10]))
-
-    sred = sorted(mydict.items(), key=lambda value:float(value[1]))
+    # sred = sorted(mydict.items(), key=lambda value:float(value[1]))
     return sorted(mydict, key=mydict.get).limit(num)
 
 def plot_harmonic_closeness_eigen(G):
@@ -214,7 +208,7 @@ def filter_nodes_by_degree(G, all_nodes, k=2):
     f = reattach_attributes_of_interest(f, all_nodes)
     return f
 
-def edge_analysis(G, attr = 'intermediary'):
+def edge_analysis(G, attr = 'ty', name = 'intermediary'):
     '''
     Find the average number of degree a node with a certain attribute
     ----------------------------------------------
@@ -226,16 +220,10 @@ def edge_analysis(G, attr = 'intermediary'):
     - 'mean_degrees', the average number of degrees the nodes
         of a certain attribute has
     '''
-    # node_inter = filter(lambda n, d: d['type'] == 'intermediary', G.nodes(data=True))
-    # intermediaries = pd.read_csv('/Users/rdelapp/Galvanize/DSI_g61/capstone/panama_papers/data/csv_panama_papers_2018-02-14/panama_papers_nodes_intermediary.csv', index_col = "node_id")
-    # idx_nodes = all_nodes[all_nodes.type == 'intermediary'].index
-    # foo = intermediaries.name
-    nodes_of_interest = node_attr(G, attr = attr)
+    nodes_of_interest = node_attr(G, attr = attr, name = name)
     degrees_connectivity_dict = nx.average_degree_connectivity(G, nodes = nodes_of_interest)
 
-    # nodes_of_interest = [x for x,y in ego.nodes(data=True) if y['ty']== 'intermediary' ]
-    # nx.average_degree_connectivity(ego, nodes = nodes_of_interest)
-    mean_degrees = [v  for k,v in G.degree(nodes_of_interest)]
+    mean_degrees = np.mean([v  for k,v in G.degree(nodes_of_interest)])
 
     return degrees_connectivity_dict, mean_degrees
 
@@ -328,11 +316,27 @@ def plot_hist_size_partition(partition):
     plt.ylabel('Frequency of Partition Size')
     plt.title('Distribution of Partition Size in Nodes')
 
-def Community_break_down(ego):
+def percent_cc_df(G, attr = 'cc'):
+    '''
+    GAOL: this function returns a dataframe for the percentage of nodes that
+    come from each country in the community/graph
+    INPUT:
+    - G, instantiated networkX graph/subgraph
+    OUTPUT:
+    -
+    '''
+    com_nodes_cc = nx.get_node_attributes(G, attr)
+    nodes_cc_val = Counter(com_nodes_cc.values())
+    result = pd.DataFrame(list(nodes_cc_val.items()), columns=[attr, 'n_nodes'])
+    result['Community Percentage'] = result['n_nodes']/sum(result['n_nodes'])*100
+    result = result.sort_values(by=['Community Percentage'], ascending = False)
+    return result
+
+def Community_break_down(partition):
 
     ## get list of nodes for each louvian_partition
     community_list = defaultdict(list)
-    for k,v in dendo[0].items():
+    for k,v in partition.items():
         community_list[v].append(k)
 
     ## generate separate subgraph for each community
@@ -344,20 +348,36 @@ def Community_break_down(ego):
     # ego_list = [nx.subgraph(ego, community_list[n]), for n in community_list.keys()]
 
     # get modularity values per subgraph
-    ego_modularity = []
-    for i in range(len(community_list)):
-        Q = cm.modularity(community_list[i], ego_list[i])
-        ego_modularity.append(Q)
+    # empty pd dataframe
+    ego_modularity_df = pd.DataFrame(columns=['com_idx', 'Q', 'n_nodes'])
+    for i in range(len(community_list)): #community_list.keys():
+        Q = my_louvian_modularity(ego_list[i])
+        ego_modularity_df.loc[i] = [[i], Q, len(community_list[i])]
+    # Sort the df by modularity, Q
+    ego_modularity_df = ego_modularity_df.sort_values(by=['Q'], ascending = False)
 
     # return top ranking modularity communites
+    top_communities = ego_modularity_df['com_idx'][ego_modularity_df['Q'] > 0.6]
 
     # break down each community
+    #returns degrees for each node within ego_list[i]
+    for i in community_list.keys():
+        [{k,v}  for k,v in ego_list[i].degree(community_list[i])]
+
+    foo = nx.get_node_attributes(ego_list[8], 'cc')
+    Counter(foo.values())
+
+
+
+
     '''
     1. Country_community
+        given a com_idx --> get node_names
+        get cc
 
-    2. avg_degree of community
+    2. avg_degree per community
 
     3. community centrality
 
-    4. nodes with top degrees
+    4. nodes with top degrees per community
     '''
