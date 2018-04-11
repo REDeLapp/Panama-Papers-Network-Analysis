@@ -102,6 +102,8 @@ As seen in table X, intermediary type nodes have the larger average number of de
 | Officer | 2.7303|
 
 In table X, we have the Names of the top 10 nodes with the larges number of degrees.
+
+
 | Name          | Type          | Number Number of Degrees |
 | ------------- |-------------:| -------:|
 |RAWI_&_CO |(intermediary) |1475|
