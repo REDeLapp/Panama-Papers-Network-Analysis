@@ -131,7 +131,7 @@ In table 3, we have the Names of the top 10 nodes with the larges number of degr
 
 | Name          | Type          | Number Number of Degrees |
 | ------------- |-------------:| -------:|
-|Unknown| |Unknown| 1931|
+|Unknown| Unknown| 1931|
 |RAWI_&_CO |(intermediary) |1475|
 |BROCK_NOMINEES_LTD |(officer) |243|
 |CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
