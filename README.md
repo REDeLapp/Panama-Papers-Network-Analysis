@@ -32,20 +32,22 @@ Link: https://www.occrp.org/en/panamapapers/database
 
 The  ”ICIJ  Offshore”  database,  presents  the  network  of  relationships  between  companies  and  individual  people  with  offshore  companies based in tax havens. Consists in a directed and unweighted network based on commercial  registration  of  all  types  of  companies  involved  in  the  scandal  and the existing relations type, which are:
 
-| Edge Relation | Meaning       |
+| **Text** | ** Meaning In Document**       |
 | ------------- |:-------------:|
-|"director of”|referring to the person appointed to the company’s management|
-|"director of” | referring to the person appointed to the company’s management|
-|”address” | through which was possible to establish the country origin of the company|
-|”shareholder of” | if it holds a stake in an offshore company|
-|”intermediary of” | if it mediates companies in access to offshores|
-| ”similar of” | if the company is related to another company, among other attributes|
+|"director of”| Refers to the person appointed to the company’s management.|
+|"director of” | Refers to the person appointed to the company’s management.|
+|”address” | Refers to the address through which was possible to establish the country origin of the company.|
+|”shareholder of” | If it holds a stake in an offshore company.|
+|”intermediary of” | If it mediates companies in access to offshores.|
+| ”similar of” | If the company is related to another company, among other attributes.|
 
-How The Data Is Structured:
+# How The Data Is Structured:
 Below is a break down between the different roles of Entity, Officer, and Intermediary.
 
 ![](images/shapeofthedata.png)
 (source:https://guides.neo4j.com/sandbox/icij-paradise-papers/datashape.html)
+
+When interpreting the graph, it will be important to understand the obligation that each person or person(s) has within the network.  
 
 * **Entity** (offshore)
 <br /> Company, trust or fund created in a low-tax, offshore jurisdiction by an agent.
@@ -60,6 +62,8 @@ Below is a break down between the different roles of Entity, Officer, and Interm
 * **Address**
 <br /> A contact postal address as it appears in the original databases
   obtained by ICIJ.
+
+# Global Breakdown Of The Entire Panama Paper Corpus
 
 In table 1, breaks down the file structure of how the entire corpus of documents provided by the ICIJ.
 
@@ -127,6 +131,7 @@ In table 3, we have the Names of the top 10 nodes with the larges number of degr
 
 | Name          | Type          | Number Number of Degrees |
 | ------------- |-------------:| -------:|
+|Unknown| |Unknown| 1931|
 |RAWI_&_CO |(intermediary) |1475|
 |BROCK_NOMINEES_LTD |(officer) |243|
 |CREDIT_SUISSE__CHANNEL_ISLANDS____LTD |(intermediary) |224|
